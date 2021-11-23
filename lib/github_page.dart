@@ -4,7 +4,6 @@ import 'package:github_flutter_app/git_hub_bloc.dart';
 import 'package:github_flutter_app/git_hub_event.dart';
 import 'package:github_flutter_app/git_hub_state.dart';
 import 'package:github_flutter_app/github_client.dart';
-import 'package:github_flutter_app/github_model.dart';
 
 class GitHubPage extends StatefulWidget {
   GitHubPage({Key? key}) : super(key: key);
@@ -26,25 +25,43 @@ class _GitHubPageState extends State<GitHubPage> {
       create: (BuildContext context) => GitHubBloc(),
       child: Scaffold(
         appBar: AppBar(),
-        body: Container(
-            child: Column(children: [
-          TextField(
+        body: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+        Container(
+          width: 550,
+          child: TextField(
+            decoration: InputDecoration(
+                prefixIcon: Icon(Icons.search_rounded),
+                border: OutlineInputBorder()),
             controller: _controller,
           ),
-          Center(
-            child: TextButton(
-              child: Text('Search'),
-              onPressed: () async {
-//                    t = await temp.getItems(_controller.text);
-//                    print('ttttttt $t fgdbgsf');
+        ),
+        Center(
+          child: TextButton(
+            child: Text('Search'),
+            onPressed: () {
+              if (_controller.text.isNotEmpty) {
                 showDialog(context: context, builder: alert);
                 gitHubBloc.add(LoadingEvent(_controller.text));
-              },
-            ),
+              } else {
+                return showSnack(context);
+              }
+            },
           ),
-        ])),
+        ),
+          ],
+        ),
       ),
     );
+  }
+
+  void showSnack(BuildContext context) {
+    final snackBar = SnackBar(
+      content: const Text('The Search cannot be empty'),
+      backgroundColor: Colors.redAccent,
+    );
+    ScaffoldMessenger.of(context).showSnackBar(snackBar);
   }
 
   Widget alert(BuildContext context) {
@@ -53,6 +70,16 @@ class _GitHubPageState extends State<GitHubPage> {
       child: BlocBuilder<GitHubBloc, GitHubState>(
           bloc: gitHubBloc,
           builder: (BuildContext context, state) {
+            if (state is GitHubInitial) {
+              return Center(
+                  child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  CircularProgressIndicator(),
+                  Text('Loading in progress...')
+                ],
+              ));
+            }
             if (state is GitHubLoaded) {
               return ListView.builder(
                   padding: const EdgeInsets.all(8),
