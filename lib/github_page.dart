@@ -28,28 +28,29 @@ class _GitHubPageState extends State<GitHubPage> {
         body: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-        Container(
-          width: 550,
-          child: TextField(
-            decoration: InputDecoration(
-                prefixIcon: Icon(Icons.search_rounded),
-                border: OutlineInputBorder()),
-            controller: _controller,
-          ),
-        ),
-        Center(
-          child: TextButton(
-            child: Text('Search'),
-            onPressed: () {
-              if (_controller.text.isNotEmpty) {
-                showDialog(context: context, builder: alert);
-                gitHubBloc.add(LoadingEvent(_controller.text));
-              } else {
-                return showSnack(context);
-              }
-            },
-          ),
-        ),
+            Container(
+              width: 550,
+              child: TextField(
+                decoration: InputDecoration(
+                    labelText: 'Input Repos name',
+                    prefixIcon: Icon(Icons.search_rounded),
+                    border: OutlineInputBorder()),
+                controller: _controller,
+              ),
+            ),
+            Center(
+              child: TextButton(
+                child: Text('Search'),
+                onPressed: () {
+                  if (_controller.text.isNotEmpty) {
+                    showDialog(context: context, builder: alert);
+                    gitHubBloc.add(LoadingEvent(_controller.text));
+                  } else {
+                    return showSnack(context);
+                  }
+                },
+              ),
+            ),
           ],
         ),
       ),
@@ -79,8 +80,7 @@ class _GitHubPageState extends State<GitHubPage> {
                   Text('Loading in progress...')
                 ],
               ));
-            }
-            if (state is GitHubLoaded) {
+            } else if (state is GitHubLoaded && state.loadedItems.isNotEmpty) {
               return ListView.builder(
                   padding: const EdgeInsets.all(8),
                   itemCount: state.loadedItems.length,
@@ -95,14 +95,23 @@ class _GitHubPageState extends State<GitHubPage> {
                       leading: Image.network('${state.loadedItems[index][3]}'),
                     );
                   });
-            }
-            if (state is GitHubError) {
+            } else if (state is GitHubError) {
               return Container(
                 child: Center(child: Text('${state.error}')),
               );
             } else {
               return Container(
-                child: Center(child: Text('No data here from bloc')),
+                child: Center(
+                    child: Column(
+                      children: [
+                        SizedBox(
+                          height: 150,
+                        ),
+                        Image.asset('assets/no_data_found.png'),
+                        Text(
+                            'No data was found on GitHub with this Search input'),
+                      ],
+                    )),
               );
             }
           }),
