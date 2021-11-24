@@ -10,16 +10,20 @@ class GitHubClient {
     final List<List<dynamic>> _result = [];
     String? response;
     print('starting...');
-    await http
-        .get(Uri.parse(
-            'https://api.github.com/search/repositories?o=desc&q=$query&s=stars'))
-        .then((value) => response = value.body);
-    Map<String, dynamic> map = json.decode(response!);
-    List<dynamic> items = map['items'];
-    for (int i = 0; i < items.length; i++) {
-      print(items[i]);
-      _result.add(_gitHubModel.fromJson(items[i]));
-    }
-    return _result;
+    Response response = await http.get(Uri.parse(
+        'https://api.github.com/search/repositores?o=desc&q=$query&s=stars'));
+    Map<String, dynamic> map = json.decode(response.body);
+    List<dynamic> _items = map['items'];
+    List<dynamic> _header =[];
+    _header.add(response.statusCode);
+//    if (response.statusCode == 200) {
+      for (int i = 0; i < _items.length; i++) {
+        _result.add(GitHubModel.fromJson(_items[i]));
+      }
+      return _result;
+//    } else {
+//      print('eelse   ${response.statusCode}');
+//      return header;
+//    }
   }
 }

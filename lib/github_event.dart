@@ -7,8 +7,8 @@ class InitEvent extends GitHubEvents {
   List<Object?> get props => [];
 }
 
-class LoadingEvent extends GitHubEvents {
-  LoadingEvent(this.text);
+class LoadedEvent extends GitHubEvents {
+  LoadedEvent(this.text);
 
   String text;
 

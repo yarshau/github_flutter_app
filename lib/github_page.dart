@@ -44,7 +44,7 @@ class _GitHubPageState extends State<GitHubPage> {
                 onPressed: () {
                   if (_controller.text.isNotEmpty) {
                     showDialog(context: context, builder: alert);
-                    gitHubBloc.add(LoadingEvent(_controller.text));
+                    gitHubBloc.add(LoadedEvent(_controller.text));
                   } else {
                     return showSnack(context);
                   }
@@ -60,6 +60,7 @@ class _GitHubPageState extends State<GitHubPage> {
   void showSnack(BuildContext context) {
     final snackBar = SnackBar(
       content: const Text('The Search cannot be empty'),
+
       backgroundColor: Colors.redAccent,
     );
     ScaffoldMessenger.of(context).showSnackBar(snackBar);
@@ -82,6 +83,7 @@ class _GitHubPageState extends State<GitHubPage> {
               ));
             } else if (state is GitHubLoaded && state.loadedItems.isNotEmpty) {
               return ListView.builder(
+                shrinkWrap: true,
                   padding: const EdgeInsets.all(8),
                   itemCount: state.loadedItems.length,
                   itemBuilder: (BuildContext context, int index) {
@@ -97,21 +99,23 @@ class _GitHubPageState extends State<GitHubPage> {
                   });
             } else if (state is GitHubError) {
               return Container(
-                child: Center(child: Text('${state.error}')),
+                child: Center(child: Text('${state.reason}')),
               );
             } else {
-              return Container(
-                child: Center(
-                    child: Column(
-                      children: [
-                        SizedBox(
-                          height: 150,
-                        ),
-                        Image.asset('assets/no_data_found.png'),
-                        Text(
-                            'No data was found on GitHub with this Search input'),
-                      ],
-                    )),
+              return SingleChildScrollView(
+                child: Container(
+                  child: Center(
+                      child: Column(
+                        children: [
+                          SizedBox(
+                            height: 100,
+                          ),
+                          Image.asset('assets/no_data_found.png'),
+                          Text(
+                              'No data was found on GitHub with this Search input'),
+                        ],
+                      )),
+                ),
               );
             }
           }),
