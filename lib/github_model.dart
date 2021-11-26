@@ -1,9 +1,28 @@
-class GitHubModel {
-  int? id;
-  String? name;
-  String? git_url;
-  String? avatar_url;
-  Map? owner;
+import 'package:flutter/cupertino.dart';
+
+abstract class GitHubResponse {}
+
+class ResponseError extends GitHubResponse {
+  ResponseError({required this.statusCode, required this.reasonPhrase});
+
+  final int statusCode;
+  final String reasonPhrase;
+}
+
+class ResponseSuccess extends GitHubResponse{
+  final List<RepoInfo> items;
+
+  ResponseSuccess(this.items);
+}
+
+class RepoInfo extends GitHubResponse {
+  RepoInfo({
+    required this.id,
+    required this.name,
+    required this.gitUrl,
+    required this.owner,
+    required this.avatarUrl,
+  });
 
   GitHubModel({this.id, this.name, this.git_url, this.owner, this.avatar_url});
 

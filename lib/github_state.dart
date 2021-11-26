@@ -17,9 +17,10 @@ class GitHubLoaded extends GitHubState {
 }
 
 class GitHubError extends GitHubState {
-  final reason;
+  final String reason;
+  final int statusCode;
 
-  GitHubError({this.reason});
+  GitHubError({required this.reason, required this.statusCode});
 
   @override
   List<Object?> get props => [];

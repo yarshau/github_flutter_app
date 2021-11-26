@@ -60,7 +60,6 @@ class _GitHubPageState extends State<GitHubPage> {
   void showSnack(BuildContext context) {
     final snackBar = SnackBar(
       content: const Text('The Search cannot be empty'),
-
       backgroundColor: Colors.redAccent,
     );
     ScaffoldMessenger.of(context).showSnackBar(snackBar);
@@ -82,19 +81,18 @@ class _GitHubPageState extends State<GitHubPage> {
                 ],
               ));
             } else if (state is GitHubLoaded && state.loadedItems.isNotEmpty) {
+              final List<RepoInfo> list = state.loadedItems;
+              print(list.first);
               return ListView.builder(
-                shrinkWrap: true,
-                  padding: const EdgeInsets.all(8),
-                  itemCount: state.loadedItems.length,
-                  itemBuilder: (BuildContext context, int index) {
+                  itemCount: state.loadedItems.length - 1,
+                  itemBuilder: (context, index) {
                     return ListTile(
-                      key: UniqueKey(),
-                      title: Text('Name: ${state.loadedItems[index][0]}'),
+                      title: Text('Name: ${state.loadedItems[index].name}'),
                       subtitle:
-                          //how to make count not changable ???????????????????????????
-                          Text('Id: ${state.loadedItems[index][1]} ${count++}'),
-                      trailing: Text('Url: ${state.loadedItems[index][2]}'),
-                      leading: Image.network('${state.loadedItems[index][3]}'),
+                          Text('Id: ${state.loadedItems[index].id} ${count++}'),
+                      trailing: Text('Url: ${state.loadedItems[index].gitUrl}'),
+                      leading: Image.network(
+                          '${state.loadedItems[index].avatarUrl}'),
                     );
                   });
             } else if (state is GitHubError) {
@@ -106,15 +104,15 @@ class _GitHubPageState extends State<GitHubPage> {
                 child: Container(
                   child: Center(
                       child: Column(
-                        children: [
-                          SizedBox(
-                            height: 100,
-                          ),
-                          Image.asset('assets/no_data_found.png'),
-                          Text(
-                              'No data was found on GitHub with this Search input'),
-                        ],
-                      )),
+                    children: [
+                      SizedBox(
+                        height: 100,
+                      ),
+                      Image.asset('assets/no_data_found.png'),
+                      Text(
+                          'No data was found on GitHub with this Search input'),
+                    ],
+                  )),
                 ),
               );
             }

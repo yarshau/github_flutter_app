@@ -11,15 +11,13 @@ class GitHubBloc extends Bloc<GitHubEvents, GitHubState> {
   GitHubBloc() : super(GitHubInitial()) {
     on<LoadedEvent>((event, emit) async {
       emit(GitHubInitial());
-      try {
-        List<GitHubModel> _loadedItemsList =
-        await gitHubClient.getItems(event.text);
-        emit(GitHubLoaded(loadedItems: _loadedItemsList));
-      } catch (error){
-        emit(GitHubError(reason: error));
+      GitHubResponse _response = await gitHubClient.getItems(event.text);
+      if (_response is ResponseSuccess) {
+        emit(GitHubLoaded(loadedItems: _response.items));
+      } else if (_response is ResponseError) {
+        emit(GitHubError(reason: _response.reasonPhrase, statusCode: _response.statusCode));
       }
     });
-
   }
 
 //  void search(String query) async {
