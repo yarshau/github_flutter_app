@@ -25,37 +25,39 @@ class _GitHubPageState extends State<GitHubPage> {
       create: (BuildContext context) => GitHubBloc(),
       child: Scaffold(
         appBar: AppBar(),
-        body:
-            //how to make here SIngleChildScrollView ????????????????????????????????
-            Column(
-          children: [
-            SizedBox(
-              height: 25,
-            ),
-            Container(
-              width: 550,
-              child: TextField(
-                decoration: InputDecoration(
-                    labelText: 'Input Repos name',
-                    prefixIcon: Icon(Icons.search_rounded),
-                    border: OutlineInputBorder()),
-                controller: _controller,
+        body: SingleChildScrollView(
+          scrollDirection: Axis.vertical,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              SizedBox(
+                height: 25,
               ),
-            ),
-            Center(
-              child: TextButton(
-                child: Text('Search'),
-                onPressed: () {
-                  if (_controller.text.isNotEmpty) {
-                    gitHubBloc.add(LoadedEvent(_controller.text));
-                  } else {
-                    return _showSnack(context);
-                  }
-                },
+              Container(
+                width: 550,
+                child: TextField(
+                  decoration: InputDecoration(
+                      labelText: 'Input Repos name',
+                      prefixIcon: Icon(Icons.search_rounded),
+                      border: OutlineInputBorder()),
+                  controller: _controller,
+                ),
               ),
-            ),
-            _buildRepoList(context)
-          ],
+              Center(
+                child: TextButton(
+                  child: Text('Search'),
+                  onPressed: () {
+                    if (_controller.text.isNotEmpty) {
+                      gitHubBloc.add(LoadedEvent(_controller.text));
+                    } else {
+                      return _showSnack(context);
+                    }
+                  },
+                ),
+              ),
+              Flexible(fit: FlexFit.loose, child: _buildRepoList(context))
+            ],
+          ),
         ),
       ),
     );
@@ -69,7 +71,6 @@ class _GitHubPageState extends State<GitHubPage> {
     ScaffoldMessenger.of(context).showSnackBar(snackBar);
   }
 
-  //how to make the same gitHubBloc instance if this widjet was in separate class??????
   Widget _buildRepoList(BuildContext context) {
     return BlocBuilder<GitHubBloc, GitHubState>(
         bloc: gitHubBloc,
@@ -78,30 +79,25 @@ class _GitHubPageState extends State<GitHubPage> {
           if (state is GitHubEmptyState) {
             return Center(child: Text('Press on the Search button'));
           } else if (state is GitHubInitial) {
-            return Center(
-                child: Column(
+            return Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 CircularProgressIndicator(),
                 Text('Loading in progress...')
               ],
-            ));
+            );
           } else if (state is GitHubLoaded && state.loadedItems.isNotEmpty) {
             final List<RepoInfo> list = state.loadedItems;
             print(list.first);
-            return Expanded(
-              child: ListView.builder(
-                itemCount: state.loadedItems.length - 1,
-                itemBuilder: (context, index) {
-                  return ListTile(
-                    title: Text('Name: ${state.loadedItems[index].name}'),
-                    subtitle: Text('Id: ${state.loadedItems[index].id}'),
-                    trailing: Text('Url: ${state.loadedItems[index].gitUrl}'),
-                    leading:
-                        Image.network('${state.loadedItems[index].avatarUrl}'),
-                  );
-                },
-              ),
+            return Column(
+              children: list
+                  .map((item) => ListTile(
+                        title: Text('Name: ${item.name}'),
+                        subtitle: Text('Id: ${item.id}'),
+                        trailing: Text('Url: ${item.gitUrl}'),
+                        leading: Image.network('${item.avatarUrl}'),
+                      ))
+                  .toList(),
             );
           } else if (state is GitHubError) {
             return Container(
@@ -115,11 +111,10 @@ class _GitHubPageState extends State<GitHubPage> {
           } else {
             // how to
             return SingleChildScrollView(
-              // still overflowed is shown here , how to fix this ????
               child: Column(
                 children: [
-              Image.asset('assets/no_data_found.png'),
-              Text('No data was found on GitHub with this Search input'),
+                  Image.asset('assets/no_data_found.png'),
+                  Text('No data was found on GitHub with this Search input'),
                 ],
               ),
             );
