@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:github_flutter_app/github_state.dart';
 import 'package:github_flutter_app/github_client.dart';

@@ -49,19 +49,19 @@ class _GitHubPageState extends State<GitHubPage> {
                   if (_controller.text.isNotEmpty) {
                     gitHubBloc.add(LoadedEvent(_controller.text));
                   } else {
-                    return showSnack(context);
+                    return _showSnack(context);
                   }
                 },
               ),
             ),
-            buildRepoList(context)
+            _buildRepoList(context)
           ],
         ),
       ),
     );
   }
 
-  void showSnack(BuildContext context) {
+  void _showSnack(BuildContext context) {
     final snackBar = SnackBar(
       content: const Text('The Search cannot be empty'),
       backgroundColor: Colors.redAccent,
@@ -70,7 +70,7 @@ class _GitHubPageState extends State<GitHubPage> {
   }
 
   //how to make the same gitHubBloc instance if this widjet was in separate class??????
-  Widget buildRepoList(BuildContext context) {
+  Widget _buildRepoList(BuildContext context) {
     return BlocBuilder<GitHubBloc, GitHubState>(
         bloc: gitHubBloc,
         builder: (BuildContext context, state) {
