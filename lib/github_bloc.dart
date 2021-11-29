@@ -1,6 +1,7 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:github_flutter_app/github_state.dart';
 import 'package:github_flutter_app/github_client.dart';
+import 'package:github_flutter_app/github_model.dart';
 
 import 'github_event.dart';
 

@@ -1,4 +1,5 @@
 import 'package:equatable/equatable.dart';
+import 'package:github_flutter_app/github_model.dart';
 
 abstract class GitHubState extends Equatable {}
 
@@ -13,7 +14,7 @@ class GitHubInitial extends GitHubState {
 }
 
 class GitHubLoaded extends GitHubState {
-  final List<List<dynamic>> loadedItems;
+  final List<RepoInfo> loadedItems;
 
   GitHubLoaded({required this.loadedItems});
 

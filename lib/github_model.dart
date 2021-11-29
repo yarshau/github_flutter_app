@@ -22,15 +22,19 @@ class RepoInfo extends GitHubResponse {
     required this.avatarUrl,
   });
 
-  GitHubModel({this.id, this.name, this.git_url, this.owner, this.avatar_url});
+  final int id;
+  final String name;
+  final String gitUrl;
+  final String avatarUrl;
+  final Map owner;
 
-  fromJson(Map<dynamic, dynamic> json) {
-    id = json['id'];
-    name = json['name'];
-    git_url = json['git_url'];
-    owner = json['owner'];
-    avatar_url = owner!['avatar_url'];
-    List _res = [name, id, git_url, avatar_url];
-    return _res;
+  factory RepoInfo.fromJson(Map<dynamic, dynamic> json) {
+    return RepoInfo(
+      id: json['id'],
+      name: json['name'],
+      gitUrl: json['git_url'],
+      owner: json['owner'],
+      avatarUrl: json['owner']['avatar_url'],
+    );
   }
 }
