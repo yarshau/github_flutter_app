@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:github_flutter_app/git_hub_bloc.dart';
-import 'package:github_flutter_app/git_hub_event.dart';
-import 'package:github_flutter_app/git_hub_state.dart';
-import 'package:github_flutter_app/github_client.dart';
+import 'package:github_flutter_app/github_bloc.dart';
+import 'package:github_flutter_app/github_event.dart';
+import 'package:github_flutter_app/github_model.dart';
+import 'package:github_flutter_app/github_state.dart';
 
 class GitHubPage extends StatefulWidget {
   GitHubPage({Key? key}) : super(key: key);
@@ -13,7 +13,6 @@ class GitHubPage extends StatefulWidget {
 }
 
 class _GitHubPageState extends State<GitHubPage> {
-  GitHubClient temp = GitHubClient();
   late List<dynamic> t;
   final _controller = TextEditingController();
 
