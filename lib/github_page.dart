@@ -25,9 +25,13 @@ class _GitHubPageState extends State<GitHubPage> {
       create: (BuildContext context) => GitHubBloc(),
       child: Scaffold(
         appBar: AppBar(),
-        body: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
+        body:
+            //how to make here SIngleChildScrollView ????????????????????????????????
+            Column(
           children: [
+            SizedBox(
+              height: 25,
+            ),
             Container(
               width: 550,
               child: TextField(
@@ -43,7 +47,6 @@ class _GitHubPageState extends State<GitHubPage> {
                 child: Text('Search'),
                 onPressed: () {
                   if (_controller.text.isNotEmpty) {
-                    showDialog(context: context, builder: alert);
                     gitHubBloc.add(LoadedEvent(_controller.text));
                   } else {
                     return showSnack(context);
@@ -51,6 +54,7 @@ class _GitHubPageState extends State<GitHubPage> {
                 },
               ),
             ),
+            buildRepoList(context)
           ],
         ),
       ),
@@ -65,58 +69,61 @@ class _GitHubPageState extends State<GitHubPage> {
     ScaffoldMessenger.of(context).showSnackBar(snackBar);
   }
 
-  Widget alert(BuildContext context) {
-    int count = 0;
-    return Material(
-      child: BlocBuilder<GitHubBloc, GitHubState>(
-          bloc: gitHubBloc,
-          builder: (BuildContext context, state) {
-            if (state is GitHubInitial) {
-              return Center(
-                  child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
+  //how to make the same gitHubBloc instance if this widjet was in separate class??????
+  Widget buildRepoList(BuildContext context) {
+    return BlocBuilder<GitHubBloc, GitHubState>(
+        bloc: gitHubBloc,
+        builder: (BuildContext context, state) {
+          print('$state');
+          if (state is GitHubEmptyState) {
+            return Center(child: Text('Press on the Search button'));
+          } else if (state is GitHubInitial) {
+            return Center(
+                child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                CircularProgressIndicator(),
+                Text('Loading in progress...')
+              ],
+            ));
+          } else if (state is GitHubLoaded && state.loadedItems.isNotEmpty) {
+            final List<RepoInfo> list = state.loadedItems;
+            print(list.first);
+            return Expanded(
+              child: ListView.builder(
+                itemCount: state.loadedItems.length - 1,
+                itemBuilder: (context, index) {
+                  return ListTile(
+                    title: Text('Name: ${state.loadedItems[index].name}'),
+                    subtitle: Text('Id: ${state.loadedItems[index].id}'),
+                    trailing: Text('Url: ${state.loadedItems[index].gitUrl}'),
+                    leading:
+                        Image.network('${state.loadedItems[index].avatarUrl}'),
+                  );
+                },
+              ),
+            );
+          } else if (state is GitHubError) {
+            return Container(
+              child: Column(
                 children: [
-                  CircularProgressIndicator(),
-                  Text('Loading in progress...')
+                  Text('The status code is: ${state.statusCode}'),
+                  Text('The reason is: ${state.reason}'),
                 ],
-              ));
-            } else if (state is GitHubLoaded && state.loadedItems.isNotEmpty) {
-              final List<RepoInfo> list = state.loadedItems;
-              print(list.first);
-              return ListView.builder(
-                  itemCount: state.loadedItems.length - 1,
-                  itemBuilder: (context, index) {
-                    return ListTile(
-                      title: Text('Name: ${state.loadedItems[index].name}'),
-                      subtitle:
-                          Text('Id: ${state.loadedItems[index].id} ${count++}'),
-                      trailing: Text('Url: ${state.loadedItems[index].gitUrl}'),
-                      leading: Image.network(
-                          '${state.loadedItems[index].avatarUrl}'),
-                    );
-                  });
-            } else if (state is GitHubError) {
-              return Container(
-                child: Center(child: Text('${state.reason}')),
-              );
-            } else {
-              return SingleChildScrollView(
-                child: Container(
-                  child: Center(
-                      child: Column(
-                    children: [
-                      SizedBox(
-                        height: 100,
-                      ),
-                      Image.asset('assets/no_data_found.png'),
-                      Text(
-                          'No data was found on GitHub with this Search input'),
-                    ],
-                  )),
-                ),
-              );
-            }
-          }),
-    );
+              ),
+            );
+          } else {
+            // how to
+            return SingleChildScrollView(
+              // still overflowed is shown here , how to fix this ????
+              child: Column(
+                children: [
+              Image.asset('assets/no_data_found.png'),
+              Text('No data was found on GitHub with this Search input'),
+                ],
+              ),
+            );
+          }
+        });
   }
 }

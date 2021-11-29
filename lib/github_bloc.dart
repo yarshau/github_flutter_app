@@ -8,7 +8,7 @@ import 'github_event.dart';
 class GitHubBloc extends Bloc<GitHubEvents, GitHubState> {
   GitHubClient gitHubClient = GitHubClient();
 
-  GitHubBloc() : super(GitHubInitial()) {
+  GitHubBloc() : super(GitHubEmptyState()) {
     on<LoadedEvent>((event, emit) async {
       emit(GitHubInitial());
       GitHubResponse _response = await gitHubClient.getItems(event.text);

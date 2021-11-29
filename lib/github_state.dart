@@ -2,6 +2,11 @@ import 'package:equatable/equatable.dart';
 
 abstract class GitHubState extends Equatable {}
 
+class GitHubEmptyState extends GitHubState{
+  @override
+  List<Object?> get props => [];
+}
+
 class GitHubInitial extends GitHubState {
   @override
   List<Object?> get props => [];
