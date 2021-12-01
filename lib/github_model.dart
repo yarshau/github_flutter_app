@@ -37,4 +37,15 @@ class RepoInfo extends GitHubResponse {
       avatarUrl: json['owner']['avatar_url'],
     );
   }
+
+
+  Map<String, dynamic> toMap(){
+    return {
+      'id' :id,
+      'name' : name,
+      'gitUrl' : gitUrl,
+      'owner' : owner,
+      'avatarUrl' : avatarUrl
+    };
+  }
 }
