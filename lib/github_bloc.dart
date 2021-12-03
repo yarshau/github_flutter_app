@@ -16,6 +16,7 @@ class GitHubBloc extends Bloc<GitHubEvents, GitHubState> {
       emit(GitHubInitial());
       GitHubResponse _response = await gitHubClient.getItems(event.text);
       if (_response is ResponseSuccess) {
+        gitHubRepository.clear();
         gitHubRepository.insert(_response.items);
         print('after dbHelper');
         emit(GitHubLoaded(loadedItems: _response.items));

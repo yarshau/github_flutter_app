@@ -18,12 +18,13 @@ class GitHubRepository {
       batch.insert(tablename, item.toMap(),
           conflictAlgorithm: ConflictAlgorithm.replace);
     }
+    await batch.commit();
   }
 
-//  Future<void> deleteGitHub(RepoInfo repoinfo) async {
-//    final db = await database;
-//    await db?.delete('git', where: 'id == ?', whereArgs: [repoinfo.id]);
-//  }
+  Future<void> clear() async {
+    final db = await dbHelper.getDatabase;
+    db.rawDelete('DELETE FROM git');
+  }
 //
 //  Future<List<RepoInfo>> getRepoInfo() async {
 //    final db = await database;
