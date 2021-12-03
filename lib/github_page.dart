@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:github_flutter_app/github_bloc.dart';
+import 'package:github_flutter_app/github_database.dart';
 import 'package:github_flutter_app/github_event.dart';
 import 'package:github_flutter_app/github_model.dart';
 import 'package:github_flutter_app/github_state.dart';
@@ -15,7 +16,7 @@ class GitHubPage extends StatefulWidget {
 class _GitHubPageState extends State<GitHubPage> {
   late List<dynamic> t;
   final _controller = TextEditingController();
-
+//  GitHubDatabase db = GitHubDatabase();
   final GitHubBloc gitHubBloc = GitHubBloc();
 
   @override
@@ -48,6 +49,7 @@ class _GitHubPageState extends State<GitHubPage> {
                   onPressed: () {
                     if (_controller.text.isNotEmpty) {
                       gitHubBloc.add(LoadedEvent(_controller.text));
+
                     } else {
                       return _showSnack(context);
                     }

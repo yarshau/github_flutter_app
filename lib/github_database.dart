@@ -1,19 +1,20 @@
-import 'package:github_flutter_app/github_model.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
 
 
-class GitHubDatabase{
-  Database? _database;
+class DatabaseProvider{
+DatabaseProvider();
+  DatabaseProvider._privateEmptyConstructor();
+  static final DatabaseProvider db = DatabaseProvider._privateEmptyConstructor();
+  Database? database;
 
-  Future<Database> get db async {
+  Future<Database> get getDatabase async {
     final dbpath = await getDatabasesPath();
     const dbname = 'github.db';
     final path = join(dbpath, dbname);
 
-    _database = await openDatabase(path, version: 1, onCreate: _createDB);
-
-  return _database!;
+    database = await openDatabase(path, version: 1, onCreate: _createDB);
+  return database!;
   }
 
 
@@ -30,43 +31,5 @@ class GitHubDatabase{
     ''');
   }
 
-  Future<void> insertGitHub(RepoInfo repoInfo) async {
-    final db = await _database;
 
-    await db?.insert(
-      'git',
-      repoInfo.toMap(),
-      conflictAlgorithm: ConflictAlgorithm.replace,
-    );
-  }
-
-
-  Future<void> deleteGitHub(RepoInfo repoinfo) async{
-    final db = await _database;
-
-    await db?.delete(
-      'git',
-      where: 'id == ?',
-      whereArgs: [repoinfo.id]
-    );
-  }
-
-  Future<List<RepoInfo>> getRepoInfo() async {
-    final db = await _database;
-
-    List<Map<String, dynamic>> items = await db!.query(
-      'git',
-      orderBy: 'id DESC'
-    );
-    return List.generate(
-      items.length,
-        (i) => RepoInfo(
-          id: items[i]['id'],
-          name: items[i]['name'],
-          avatarUrl: items[i]['avatarUrl'],
-          gitUrl: items[i]['gitUrl'],
-          owner: items[i]['owner'],
-        )
-    );
-  }
 }
