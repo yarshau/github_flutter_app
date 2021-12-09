@@ -3,7 +3,7 @@ import 'package:github_flutter_app/github_model.dart';
 
 abstract class GitHubState extends Equatable {}
 
-class GitHubEmptyState extends GitHubState{
+class GitHubEmptyState extends GitHubState {
   @override
   List<Object?> get props => [];
 }

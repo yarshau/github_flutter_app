@@ -3,7 +3,6 @@ import 'package:github_flutter_app/github_model.dart';
 import 'package:http/http.dart' as http;
 
 class GitHubClient {
-
   Future<GitHubResponse> getItems(String query) async {
     print('starting...');
     final _response = await http.get(Uri.parse(

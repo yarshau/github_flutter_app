@@ -16,7 +16,6 @@ class GitHubPage extends StatefulWidget {
 class _GitHubPageState extends State<GitHubPage> {
   late List<dynamic> t;
   final _controller = TextEditingController();
-//  GitHubDatabase db = GitHubDatabase();
   final GitHubBloc gitHubBloc = GitHubBloc();
 
   @override
@@ -49,7 +48,6 @@ class _GitHubPageState extends State<GitHubPage> {
                   onPressed: () {
                     if (_controller.text.isNotEmpty) {
                       gitHubBloc.add(LoadedEvent(_controller.text));
-
                     } else {
                       return _showSnack(context);
                     }
@@ -97,6 +95,7 @@ class _GitHubPageState extends State<GitHubPage> {
                         subtitle: Text('Id: ${item.id}'),
                         trailing: Text('Url: ${item.gitUrl}'),
                         leading: Image.network('${item.avatarUrl}'),
+
                       ))
                   .toList(),
             );
@@ -110,7 +109,6 @@ class _GitHubPageState extends State<GitHubPage> {
               ),
             );
           } else {
-            // how to
             return SingleChildScrollView(
               child: Column(
                 children: [

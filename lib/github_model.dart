@@ -1,3 +1,5 @@
+import 'package:sqflite/sqflite.dart';
+
 abstract class GitHubResponse {}
 
 class ResponseError extends GitHubResponse {
@@ -7,7 +9,7 @@ class ResponseError extends GitHubResponse {
   final String reasonPhrase;
 }
 
-class ResponseSuccess extends GitHubResponse{
+class ResponseSuccess extends GitHubResponse {
   final List<RepoInfo> items;
 
   ResponseSuccess(this.items);
@@ -18,7 +20,7 @@ class RepoInfo extends GitHubResponse {
     required this.id,
     required this.name,
     required this.gitUrl,
-    required this.owner,
+    this.owner,
     required this.avatarUrl,
   });
 
@@ -26,9 +28,9 @@ class RepoInfo extends GitHubResponse {
   final String name;
   final String gitUrl;
   final String avatarUrl;
-  final Map owner;
+  final Map? owner;
 
-  factory RepoInfo.fromJson(Map<dynamic, dynamic> json) {
+  factory RepoInfo.fromJson(Map<String, dynamic> json) {
     return RepoInfo(
       id: json['id'],
       name: json['name'],
@@ -38,14 +40,16 @@ class RepoInfo extends GitHubResponse {
     );
   }
 
+  Map<String, dynamic> toMap() {
+    return {'id': id, 'name': name, 'gitUrl': gitUrl, 'avatarUrl': avatarUrl};
+  }
 
-  Map<String, dynamic> toMap(){
-    return {
-      'id' :id,
-      'name' : name,
-      'gitUrl' : gitUrl,
-      'owner' : owner,
-      'avatarUrl' : avatarUrl
-    };
+  factory RepoInfo.fromDatabase(Map<String, dynamic> map) {
+    return RepoInfo(
+      id: map['id'],
+      name: map['name'],
+      gitUrl: map['gitUrl'],
+      avatarUrl: map['avatarUrl'],
+    );
   }
 }

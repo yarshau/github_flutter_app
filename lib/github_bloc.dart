@@ -18,13 +18,15 @@ class GitHubBloc extends Bloc<GitHubEvents, GitHubState> {
       if (_response is ResponseSuccess) {
         gitHubRepository.clear();
         gitHubRepository.insert(_response.items);
+
+        List<RepoInfo> itemsFromDB = await gitHubRepository.getRepoInfo();
         print('after dbHelper');
-        emit(GitHubLoaded(loadedItems: _response.items));
+
+        emit(GitHubLoaded(loadedItems: itemsFromDB));
       } else if (_response is ResponseError) {
         emit(GitHubError(
             reason: _response.reasonPhrase, statusCode: _response.statusCode));
       }
     });
   }
-
 }
