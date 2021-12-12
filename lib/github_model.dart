@@ -1,5 +1,3 @@
-import 'package:sqflite/sqflite.dart';
-
 abstract class GitHubResponse {}
 
 class ResponseError extends GitHubResponse {
@@ -22,6 +20,7 @@ class RepoInfo extends GitHubResponse {
     required this.gitUrl,
     this.owner,
     required this.avatarUrl,
+    this.checkToDelete,
   });
 
   final int id;
@@ -29,6 +28,7 @@ class RepoInfo extends GitHubResponse {
   final String gitUrl;
   final String avatarUrl;
   final Map? owner;
+  bool? checkToDelete;
 
   factory RepoInfo.fromJson(Map<String, dynamic> json) {
     return RepoInfo(

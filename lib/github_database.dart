@@ -14,7 +14,7 @@ class DatabaseProvider {
     final dbpath = await getDatabasesPath();
     const dbname = 'github.db';
     final path = join(dbpath, dbname);
-
+    print('db path is: $path');
     database = await openDatabase(path, version: 1, onCreate: _createDB);
     return database!;
   }
