@@ -15,11 +15,36 @@ class GitHubPage extends StatefulWidget {
 class _GitHubPageState extends State<GitHubPage> {
   final _controller = TextEditingController();
 
+  bool _checkAllItems = false;
+
 //  final GitHubBloc gitHubBloc = GitHubBloc();
   List<int> listToDelete = [];
+  bool _isVisible = false;
+
+//  late List<String> _children = [];
 
   @override
   Widget build(BuildContext context) {
+    void _checkAll(bool value) {
+      final githubState = context.read<GitHubBloc>().state as GitHubLoaded;
+      List<RepoInfo> list = githubState.loadedItems;
+      _checkAllItems = value;
+      if (_checkAllItems) {
+        print('loaded items ${list.map((e) => e.id)}');
+        setState(() {
+          listToDelete.addAll(list.map((e) => e.id));
+        });
+        print('_checkAll $value');
+        print('listtodelete ::: $listToDelete');
+      } else {
+        print('remoooooove $value');
+        setState(() {
+          listToDelete.clear();
+          _checkAllItems = false;
+        });
+      }
+    }
+
     return Scaffold(
       appBar: AppBar(),
       body: Column(
@@ -39,39 +64,59 @@ class _GitHubPageState extends State<GitHubPage> {
             ),
           ),
           Center(
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
+            child: Stack(
               children: [
-                TextButton(
-                  child: Text('Search'),
-                  onPressed: () {
-                    if (_controller.text.isNotEmpty) {
-                      BlocProvider.of<GitHubBloc>(context)
-                          .add(LoadedEvent(_controller.text));
-                    } else {
-                      return _emptySnack(context);
-                    }
-                  },
-                ),
-                SizedBox(
-                  width: 50,
-                ),
-
-                // how to hide this DELETE button if no checkbox selected yet    /////////////
-                ElevatedButton(
+                Center(
+                  child: TextButton(
+                    child: Text('Search'),
                     onPressed: () {
-                      BlocProvider.of<GitHubBloc>(context)
-                          .add(DeleteItemsEvent(listToDelete));
-                      _deleteSnack(context, listToDelete);
-
-                      // don't delete actually items if this work
-//                     listToDelete.clear();
+                      if (_controller.text.isNotEmpty) {
+                        BlocProvider.of<GitHubBloc>(context)
+                            .add(LoadedEvent(_controller.text));
+                      } else {
+                        return _emptySnack(context);
+                      }
                     },
-                    child: Text('Delete Selected')),
-                Checkbox(value: false, onChanged: (value) {})
+                  ),
+                ),
+                Align(
+                  alignment: Alignment.centerRight,
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Visibility(
+                        visible: _isVisible,
+                        child: ElevatedButton(
+                            onPressed: () {
+                              BlocProvider.of<GitHubBloc>(context)
+                                  .add(DeleteItemsEvent(listToDelete));
+                              _deleteSnack(context, listToDelete);
+// the       listToDelete.clear(); is deleted all items before event starting
+//                              listToDelete.clear();
+                              setState(() {
+                                _isVisible = false;
+                                _checkAllItems = false;
+                              });
+                            },
+                            child: Text('Delete Selected')),
+                      ),
+                      Visibility(
+                          visible: _isVisible,
+                          child: Checkbox(
+                              value: _checkAllItems,
+                              onChanged: (value) {
+                                print('value $value');
+                                setState(() {
+                                  _checkAll(value!);
+                                });
+                              }))
+                    ],
+                  ),
+                )
               ],
             ),
           ),
+          Divider(),
           Flexible(
               fit: FlexFit.tight,
               child: SingleChildScrollView(child: _buildRepoList(context))),
@@ -103,31 +148,34 @@ class _GitHubPageState extends State<GitHubPage> {
           print('rebuilded state : $state');
           if (state is GitHubEmptyState) {
             return Center(child: Text('Press on the Search button'));
-          }
-          // How not dublicate these code twice for GitHubLoaded and GitHubFromDb States    //////////////
-          else if (state is GitHubLoaded && state.loadedItems.isNotEmpty) {
+          } else if (state is GitHubLoaded) {
             final List<RepoInfo> list = state.loadedItems;
+//            _checkAll(_checkAllItems, state);
             int _count = 1;
             print(list.first.name);
             return Column(
               children: list
                   .map(
                     (item) => ListTile(
-                      title: Text('${_count++} Name: ${item.name}'),
+                      title: Text('${_count++}. Name: ${item.name}'),
                       subtitle: Column(children: [
                         Text('Id: ${item.id}'),
                         Text('Url: ${item.gitUrl}')
                       ]),
                       trailing: Checkbox(
-                          value: item.checkToDelete ?? false,
+                          value: listToDelete.contains(item.id),
                           onChanged: (_value) {
                             setState(() {
                               item.checkToDelete = _value!;
-                              if (_value == true) {
-                                listToDelete.add(item.id);
-                              } else {
-                                listToDelete.remove(item.id);
-                              }
+                              _value
+                                  ? listToDelete.add(item.id)
+                                  : listToDelete.remove(item.id);
+                              print('_isVisible $_isVisible');
+                              listToDelete.isEmpty
+                                  ? _isVisible = false
+                                  : _isVisible = true;
+                              print('listToDelete $listToDelete');
+                              print('_isVisible $_isVisible');
                             });
                           }),
                       leading: Image.network('${item.avatarUrl}'),
@@ -152,45 +200,25 @@ class _GitHubPageState extends State<GitHubPage> {
                 ],
               ),
             );
-          } else if (state is GitHubFromDb && state.itemsFromDB.isNotEmpty) {
-            final List<RepoInfo> list = state.itemsFromDB;
-            int _count = 1;
-            return Column(
-              children: list
-                  .map(
-                    (item) => ListTile(
-                      title: Text('${_count++} Name: ${item.name}'),
-                      subtitle: Column(children: [
-                        Text('Id: ${item.id}'),
-                        Text('Url: ${item.gitUrl}')
-                      ]),
-                      trailing: Checkbox(
-                          value: item.checkToDelete ?? false,
-                          onChanged: (_value) {
-                            setState(() {
-                              item.checkToDelete = _value!;
-                              if (_value == true) {
-                                listToDelete.add(item.id);
-                              } else {
-                                listToDelete.remove(item.id);
-                              }
-                            });
-                          }),
-                      leading: Image.network('${item.avatarUrl}'),
-                    ),
-                  )
-                  .toList(),
-            );
           } else {
             return SingleChildScrollView(
               child: Column(
                 children: [
-                  Image.asset('assets/no_data_found.png'),
                   Text('No data was found on GitHub with this Search input'),
+                  Image.asset('assets/no_data_found.png'),
                 ],
               ),
             );
           }
         });
   }
+
+  void onTapped(bool i) {
+    setState(
+      () {
+        _checkAllItems = i;
+      },
+    );
+  }
+//  checkAllItemsMap() {}
 }

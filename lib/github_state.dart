@@ -31,14 +31,3 @@ class GitHubError extends GitHubState {
   @override
   List<Object?> get props => [];
 }
-
-
-class GitHubFromDb extends GitHubState {
-  final List<RepoInfo> itemsFromDB;
-
-  GitHubFromDb({required this.itemsFromDB});
-
-  @override
-  List<Object?> get props => [itemsFromDB];
-
-}

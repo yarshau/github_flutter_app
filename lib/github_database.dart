@@ -1,5 +1,6 @@
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
+import 'package:sqlbrite/sqlbrite.dart';
 
 class DatabaseProvider {
   DatabaseProvider();
@@ -20,12 +21,13 @@ class DatabaseProvider {
   }
 
   Future<void> _createDB(Database db, int version) async {
-    await db.execute('''
+    var streamDb = BriteDatabase(db);
+    await streamDb.execute('''
     CREATE TABLE git(
     id INTEGER,
     name TEXT,
     gitUrl TEXT,
-    avatarUrl TEXT
+    avatarUrl BLOB
     )
     ''');
   }
