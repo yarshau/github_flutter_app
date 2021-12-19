@@ -15,6 +15,7 @@ class GitHubInitial extends GitHubState {
 
 class GitHubLoaded extends GitHubState {
   final List<RepoInfo> loadedItems;
+//  final List list;
 
   GitHubLoaded({required this.loadedItems});
 

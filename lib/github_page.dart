@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:github_flutter_app/github_bloc.dart';
@@ -16,12 +17,8 @@ class _GitHubPageState extends State<GitHubPage> {
   final _controller = TextEditingController();
 
   bool _checkAllItems = false;
-
-//  final GitHubBloc gitHubBloc = GitHubBloc();
   List<int> listToDelete = [];
   bool _isVisible = false;
-
-//  late List<String> _children = [];
 
   @override
   Widget build(BuildContext context) {
@@ -88,11 +85,12 @@ class _GitHubPageState extends State<GitHubPage> {
                         visible: _isVisible,
                         child: ElevatedButton(
                             onPressed: () {
+                              List<int> secondList = List.from(listToDelete);
                               BlocProvider.of<GitHubBloc>(context)
-                                  .add(DeleteItemsEvent(listToDelete));
+                                  .add(DeleteItemsEvent(secondList));
                               _deleteSnack(context, listToDelete);
 // the       listToDelete.clear(); is deleted all items before event starting
-//                              listToDelete.clear();
+                              listToDelete.clear();
                               setState(() {
                                 _isVisible = false;
                                 _checkAllItems = false;
@@ -150,35 +148,40 @@ class _GitHubPageState extends State<GitHubPage> {
             return Center(child: Text('Press on the Search button'));
           } else if (state is GitHubLoaded) {
             final List<RepoInfo> list = state.loadedItems;
-//            _checkAll(_checkAllItems, state);
             int _count = 1;
             print(list.first.name);
             return Column(
               children: list
                   .map(
-                    (item) => ListTile(
-                      title: Text('${_count++}. Name: ${item.name}'),
-                      subtitle: Column(children: [
-                        Text('Id: ${item.id}'),
-                        Text('Url: ${item.gitUrl}')
-                      ]),
-                      trailing: Checkbox(
-                          value: listToDelete.contains(item.id),
-                          onChanged: (_value) {
-                            setState(() {
-                              item.checkToDelete = _value!;
-                              _value
-                                  ? listToDelete.add(item.id)
-                                  : listToDelete.remove(item.id);
-                              print('_isVisible $_isVisible');
-                              listToDelete.isEmpty
-                                  ? _isVisible = false
-                                  : _isVisible = true;
-                              print('listToDelete $listToDelete');
-                              print('_isVisible $_isVisible');
-                            });
-                          }),
-                      leading: Image.network('${item.avatarUrl}'),
+                    (item) => Container(
+                      padding: EdgeInsets.symmetric(vertical: 8),
+                      decoration: BoxDecoration(
+                          border:
+                              Border(bottom: BorderSide(color: Colors.black))),
+                      child: ListTile(
+                        title: Text('${_count++}. Name: ${item.name}'),
+                        subtitle: Column(children: [
+                          Text('Id: ${item.id}'),
+                          Text('Url: ${item.gitUrl}')
+                        ]),
+                        trailing: Checkbox(
+                            value: listToDelete.contains(item.id),
+                            onChanged: (_value) {
+                              setState(() {
+                                item.checkToDelete = _value!;
+                                _value
+                                    ? listToDelete.add(item.id)
+                                    : listToDelete.remove(item.id);
+                                print('_isVisible $_isVisible');
+                                listToDelete.isEmpty
+                                    ? _isVisible = false
+                                    : _isVisible = true;
+                                print('listToDelete $listToDelete');
+                                print('_isVisible $_isVisible');
+                              });
+                            }),
+                        leading: Image.network('${item.avatarUrl}'),
+                      ),
                     ),
                   )
                   .toList(),

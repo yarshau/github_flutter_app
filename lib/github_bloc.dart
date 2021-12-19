@@ -7,14 +7,51 @@ import 'package:github_flutter_app/github_model.dart';
 import 'github_event.dart';
 
 class GitHubBloc extends Bloc<GitHubEvents, GitHubState> {
-  GitHubClient gitHubClient = GitHubClient();
-  GitHubRepository gitHubRepository = GitHubRepository();
-  GitHubPage gitHubPage = GitHubPage();
+  final GitHubClient gitHubClient = GitHubClient();
+  final GitHubRepository gitHubRepository = GitHubRepository();
+  final GitHubPage gitHubPage = GitHubPage();
+
+//  _subscribeToUpUpdates() {
+//    gitHubRepository
+//        .subscribeOnUpdates()
+//        .then((stream) =>
+//        stream.listen((items) {
+//          print('items from subscribeon : $items');
+//          if (items.isEmpty) {
+//            emit(GitHubEmptyState());
+//          } else {
+//            emit(GitHubLoaded(loadedItems: items));
+//          }
+//        }),);
+//  }
 
   GitHubBloc() : super(GitHubEmptyState()) {
-    gitHubRepository.isDatabaseInitialized.stream.listen((event) {
-      event ? _subscribeToUpUpdates() : Future.value();
-    });
+//    gitHubRepository.isDatabaseInitialized.stream.listen((event) {
+//      print('eveeent   $event');
+//      event ? _subscribeToUpUpdates() : Future.value();
+//    });
+
+    gitHubRepository.subscribeOnUpdates().then(
+          (stream) => stream.listen((items) {
+            print('items from subscribeon : $items');
+            if (items.isEmpty) {
+              emit(GitHubEmptyState());
+            } else {
+              emit(GitHubLoaded(loadedItems: items));
+            }
+          }),
+        );
+//    gitHubRepository
+//        .subscribeOnUpdates()
+//        .then((stream) =>
+//        stream.listen((items) {
+//          print('items from subscribeon : $items');
+//          if (items.isEmpty) {
+//            emit(GitHubEmptyState());
+//          } else {
+//            emit(GitHubLoaded(loadedItems: items));
+//          }
+//        }),);
 
     on<LoadedEvent>((event, emit) async {
       GitHubResponse _response = await gitHubClient.getItems(event.text);
@@ -26,28 +63,13 @@ class GitHubBloc extends Bloc<GitHubEvents, GitHubState> {
       }
     });
 
-// if no internet connection - not displayed the images
+// if no internet connection - don't displayed the images
     on<InitEvent>((event, emit) async {
       emit(GitHubEmptyState());
     });
 
-
     on<DeleteItemsEvent>((event, emit) async {
       await gitHubRepository.deleteSelected(event.listItems);
     });
-  }
-
-  _subscribeToUpUpdates() {
-    gitHubRepository
-        .subscribeOnUpdates()
-        .then((stream) =>
-        stream.listen((items) {
-          print('items from subscribeon : $items');
-          if (items.isEmpty) {
-            emit(GitHubEmptyState());
-          } else {
-            emit(GitHubLoaded(loadedItems: items));
-          }
-        }),);
   }
 }

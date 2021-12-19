@@ -10,14 +10,18 @@ class DatabaseProvider {
   static final DatabaseProvider db =
       DatabaseProvider._privateEmptyConstructor();
   Database? database;
+  late BriteDatabase _briteDatabase;
 
-  Future<Database> get getDatabase async {
-    final dbpath = await getDatabasesPath();
-    const dbname = 'github.db';
-    final path = join(dbpath, dbname);
-    print('db path is: $path');
-    database = await openDatabase(path, version: 1, onCreate: _createDB);
-    return database!;
+  Future<BriteDatabase> get getDatabase async {
+    if (database == null) {
+      final dbpath = await getDatabasesPath();
+      const dbname = 'github.db';
+      final path = join(dbpath, dbname);
+      print('db path is: $path');
+      database = await openDatabase(path, version: 1, onCreate: _createDB);
+      _briteDatabase = BriteDatabase(database!);
+    }
+    return _briteDatabase;
   }
 
   Future<void> _createDB(Database db, int version) async {

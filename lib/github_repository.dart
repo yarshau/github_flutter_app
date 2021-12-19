@@ -7,30 +7,35 @@ import 'github_model.dart';
 import 'package:sqlbrite/sqlbrite.dart';
 
 class GitHubRepository {
-  late BriteDatabase _briteDatabase;
+//  StreamController<bool> isDatabaseInitialized = StreamController();
 
-  StreamController<bool> isDatabaseInitialized = StreamController();
+//  GitHubRepository() {
+////    initDb();
+//  }
 
-  GitHubRepository() {
-    initDb();
-  }
-
-  Future<void> initDb() async {
-    final Database db = await dbHelper.getDatabase;
-    _briteDatabase = BriteDatabase(db);
-    isDatabaseInitialized.add(true);
-  }
+//  Future<void> initDb() async {
+//    final Database db = await dbHelper.getDatabase;
+//    _briteDatabase = BriteDatabase(db);
+//    isDatabaseInitialized.add(true);
+//  }
 
   static const String tableGit = 'git';
   static final DatabaseProvider dbHelper = DatabaseProvider();
 
   Future<void> insert(List<RepoInfo> items) async {
     print('inside insert method');
+    List<Map> existedId;
+    final _briteDatabase = await dbHelper.getDatabase;
     final batch = _briteDatabase.batch();
     for (var item in items) {
-      batch.insert(tableGit, item.toMap(),
-          conflictAlgorithm: ConflictAlgorithm.replace);
+      existedId =
+          await _briteDatabase.query(tableGit, where: 'id = ${item.id}');
+      if (existedId.isEmpty) {
+        batch.insert(tableGit, item.toMap(),
+            conflictAlgorithm: ConflictAlgorithm.replace);
+      }
     }
+
     await batch.commit();
   }
 
@@ -47,13 +52,17 @@ class GitHubRepository {
 //    return isNotEmpty;
 //  }
 
-  Future<Stream<List<RepoInfo>>> subscribeOnUpdates() async =>
-      _briteDatabase.createQuery(tableGit).mapToList(
-            (row) => RepoInfo.fromDatabase(row),
-          );
+  Future<Stream<List<RepoInfo>>> subscribeOnUpdates() async {
+    final _briteDatabase = await dbHelper.getDatabase;
+
+    return _briteDatabase.createQuery(tableGit).mapToList(
+          (row) => RepoInfo.fromDatabase(row),
+        );
+  }
 
   Future<void> deleteSelected(List list) async {
     print('list to DELETE ${list.length}');
+    final _briteDatabase = await dbHelper.getDatabase;
     final batch = _briteDatabase.batch();
     for (int item in list) {
       batch.delete(tableGit, where: 'ID = $item');
