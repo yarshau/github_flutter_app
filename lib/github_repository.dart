@@ -35,7 +35,6 @@ class GitHubRepository {
             conflictAlgorithm: ConflictAlgorithm.replace);
       }
     }
-
     await batch.commit();
   }
 

@@ -32,3 +32,4 @@ class GitHubError extends GitHubState {
   @override
   List<Object?> get props => [];
 }
+

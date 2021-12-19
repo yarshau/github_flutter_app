@@ -10,48 +10,25 @@ class GitHubBloc extends Bloc<GitHubEvents, GitHubState> {
   final GitHubClient gitHubClient = GitHubClient();
   final GitHubRepository gitHubRepository = GitHubRepository();
   final GitHubPage gitHubPage = GitHubPage();
-
-//  _subscribeToUpUpdates() {
-//    gitHubRepository
-//        .subscribeOnUpdates()
-//        .then((stream) =>
-//        stream.listen((items) {
-//          print('items from subscribeon : $items');
-//          if (items.isEmpty) {
-//            emit(GitHubEmptyState());
-//          } else {
-//            emit(GitHubLoaded(loadedItems: items));
-//          }
-//        }),);
-//  }
+  List<int> listToDelete1 = [];
+  bool isVisible1 = false;
 
   GitHubBloc() : super(GitHubEmptyState()) {
-//    gitHubRepository.isDatabaseInitialized.stream.listen((event) {
-//      print('eveeent   $event');
-//      event ? _subscribeToUpUpdates() : Future.value();
-//    });
-
     gitHubRepository.subscribeOnUpdates().then(
           (stream) => stream.listen((items) {
-            print('items from subscribeon : $items');
+            print('items from subscribeOn : $items');
             if (items.isEmpty) {
               emit(GitHubEmptyState());
             } else {
               emit(GitHubLoaded(loadedItems: items));
+              on<MarkAllCheckboxEvent>(event, emit) {
+                items.forEach((element) {
+                  listToDelete1.add(element.id);
+                });
+              }
             }
           }),
         );
-//    gitHubRepository
-//        .subscribeOnUpdates()
-//        .then((stream) =>
-//        stream.listen((items) {
-//          print('items from subscribeon : $items');
-//          if (items.isEmpty) {
-//            emit(GitHubEmptyState());
-//          } else {
-//            emit(GitHubLoaded(loadedItems: items));
-//          }
-//        }),);
 
     on<LoadedEvent>((event, emit) async {
       GitHubResponse _response = await gitHubClient.getItems(event.text);
@@ -69,7 +46,24 @@ class GitHubBloc extends Bloc<GitHubEvents, GitHubState> {
     });
 
     on<DeleteItemsEvent>((event, emit) async {
-      await gitHubRepository.deleteSelected(event.listItems);
+      await gitHubRepository.deleteSelected(listToDelete1);
+      listToDelete1.clear();
+    });
+
+    on<MarkCheckboxEvent>((event, emit) {
+      if (listToDelete1.contains(event.id)) {
+        listToDelete1.remove(event.id);
+      } else {
+        listToDelete1.add(event.id);
+      }
+      print('listToDelete1 $listToDelete1');
+    });
+
+    on<MarkAllCheckboxEvent>((event, emit) {
+      listToDelete1.clear();
+      listToDelete1.addAll(event.list);
+
+      print('listToDELETE: $listToDelete1');
     });
   }
 }

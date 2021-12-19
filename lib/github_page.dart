@@ -17,29 +17,24 @@ class _GitHubPageState extends State<GitHubPage> {
   final _controller = TextEditingController();
 
   bool _checkAllItems = false;
-  List<int> listToDelete = [];
   bool _isVisible = false;
 
   @override
   Widget build(BuildContext context) {
     void _checkAll(bool value) {
+      List<int> listToDelete = [];
       final githubState = context.read<GitHubBloc>().state as GitHubLoaded;
       List<RepoInfo> list = githubState.loadedItems;
       _checkAllItems = value;
       if (_checkAllItems) {
-        print('loaded items ${list.map((e) => e.id)}');
-        setState(() {
-          listToDelete.addAll(list.map((e) => e.id));
+        list.forEach((element) {
+          listToDelete.add(element.id);
         });
-        print('_checkAll $value');
-        print('listtodelete ::: $listToDelete');
       } else {
-        print('remoooooove $value');
-        setState(() {
-          listToDelete.clear();
-          _checkAllItems = false;
-        });
+        listToDelete.clear();
       }
+      BlocProvider.of<GitHubBloc>(context)
+          .add(MarkAllCheckboxEvent(listToDelete));
     }
 
     return Scaffold(
@@ -85,12 +80,9 @@ class _GitHubPageState extends State<GitHubPage> {
                         visible: _isVisible,
                         child: ElevatedButton(
                             onPressed: () {
-                              List<int> secondList = List.from(listToDelete);
                               BlocProvider.of<GitHubBloc>(context)
-                                  .add(DeleteItemsEvent(secondList));
-                              _deleteSnack(context, listToDelete);
-// the       listToDelete.clear(); is deleted all items before event starting
-                              listToDelete.clear();
+                                  .add(DeleteItemsEvent());
+                              _deleteSnack(context, BlocProvider.of<GitHubBloc>(context).listToDelete1);
                               setState(() {
                                 _isVisible = false;
                                 _checkAllItems = false;
@@ -125,7 +117,8 @@ class _GitHubPageState extends State<GitHubPage> {
 
   void _deleteSnack(BuildContext context, list) {
     final snackBar = SnackBar(
-      content: Text('The items with id:"${list.toString()}" was deleted! '),
+      content: Text(
+          'The items with id:"${list.toString()}" was deleted! '),
       backgroundColor: Colors.lime,
     );
     ScaffoldMessenger.of(context).showSnackBar(snackBar);
@@ -137,6 +130,10 @@ class _GitHubPageState extends State<GitHubPage> {
       backgroundColor: Colors.redAccent,
     );
     ScaffoldMessenger.of(context).showSnackBar(snackBar);
+  }
+
+  sprint() async {
+    print('sprint');
   }
 
   Widget _buildRepoList(BuildContext context) {
@@ -165,20 +162,24 @@ class _GitHubPageState extends State<GitHubPage> {
                           Text('Url: ${item.gitUrl}')
                         ]),
                         trailing: Checkbox(
-                            value: listToDelete.contains(item.id),
-                            onChanged: (_value) {
+                            value: BlocProvider.of<GitHubBloc>(context)
+                                .listToDelete1
+                                .contains(item.id),
+                            onChanged: (_) async {
+                              BlocProvider.of<GitHubBloc>(context)
+                                  .add(MarkCheckboxEvent(item.id));
+                              await sprint();
                               setState(() {
-                                item.checkToDelete = _value!;
-                                _value
-                                    ? listToDelete.add(item.id)
-                                    : listToDelete.remove(item.id);
-                                print('_isVisible $_isVisible');
-                                listToDelete.isEmpty
-                                    ? _isVisible = false
-                                    : _isVisible = true;
-                                print('listToDelete $listToDelete');
-                                print('_isVisible $_isVisible');
+                                BlocProvider.of<GitHubBloc>(context)
+                                        .listToDelete1
+                                        .isNotEmpty
+                                    ? _isVisible = true
+                                    : _isVisible = false;
+                                item.checkToDelete = !item.checkToDelete;
                               });
+                              if (_checkAllItems) {
+                                _checkAllItems = false;
+                              }
                             }),
                         leading: Image.network('${item.avatarUrl}'),
                       ),
@@ -215,13 +216,4 @@ class _GitHubPageState extends State<GitHubPage> {
           }
         });
   }
-
-  void onTapped(bool i) {
-    setState(
-      () {
-        _checkAllItems = i;
-      },
-    );
-  }
-//  checkAllItemsMap() {}
 }

@@ -20,7 +20,7 @@ class RepoInfo extends GitHubResponse {
     required this.gitUrl,
     this.owner,
     required this.avatarUrl,
-    this.checkToDelete,
+    required this.checkToDelete,
   });
 
   final int id;
@@ -28,7 +28,7 @@ class RepoInfo extends GitHubResponse {
   final String gitUrl;
   final String avatarUrl;
   final Map? owner;
-  bool? checkToDelete;
+  bool checkToDelete;
 
   factory RepoInfo.fromJson(Map<String, dynamic> json) {
     return RepoInfo(
@@ -37,6 +37,7 @@ class RepoInfo extends GitHubResponse {
       gitUrl: json['git_url'],
       owner: json['owner'],
       avatarUrl: json['owner']['avatar_url'],
+      checkToDelete: false
     );
   }
 
@@ -50,6 +51,7 @@ class RepoInfo extends GitHubResponse {
       name: map['name'],
       gitUrl: map['gitUrl'],
       avatarUrl: map['avatarUrl'],
+      checkToDelete: false
     );
   }
 }
