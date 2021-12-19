@@ -1,7 +1,6 @@
 import 'dart:async';
 
 import 'package:github_flutter_app/github_database.dart';
-import 'package:sqflite/sqflite.dart';
 import 'package:github_flutter_app/github_model.dart';
 import 'github_model.dart';
 import 'package:sqlbrite/sqlbrite.dart';
