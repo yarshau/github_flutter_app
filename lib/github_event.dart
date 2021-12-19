@@ -24,7 +24,7 @@ class DeleteItemsEvent extends GitHubEvents {
 class MarkCheckboxEvent extends GitHubEvents {
   MarkCheckboxEvent(this.id);
 
-  int id;
+  final int id;
 
   @override
   List<Object?> get props => [];

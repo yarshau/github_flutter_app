@@ -32,13 +32,12 @@ class RepoInfo extends GitHubResponse {
 
   factory RepoInfo.fromJson(Map<String, dynamic> json) {
     return RepoInfo(
-      id: json['id'],
-      name: json['name'],
-      gitUrl: json['git_url'],
-      owner: json['owner'],
-      avatarUrl: json['owner']['avatar_url'],
-      checkToDelete: false
-    );
+        id: json['id'],
+        name: json['name'],
+        gitUrl: json['git_url'],
+        owner: json['owner'],
+        avatarUrl: json['owner']['avatar_url'],
+        checkToDelete: false);
   }
 
   Map<String, dynamic> toMap() {
@@ -47,11 +46,10 @@ class RepoInfo extends GitHubResponse {
 
   factory RepoInfo.fromDatabase(Map<String, dynamic> map) {
     return RepoInfo(
-      id: map['id'],
-      name: map['name'],
-      gitUrl: map['gitUrl'],
-      avatarUrl: map['avatarUrl'],
-      checkToDelete: false
-    );
+        id: map['id'],
+        name: map['name'],
+        gitUrl: map['gitUrl'],
+        avatarUrl: map['avatarUrl'],
+        checkToDelete: false);
   }
 }

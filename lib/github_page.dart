@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:github_flutter_app/github_bloc.dart';
@@ -82,7 +81,10 @@ class _GitHubPageState extends State<GitHubPage> {
                             onPressed: () {
                               BlocProvider.of<GitHubBloc>(context)
                                   .add(DeleteItemsEvent());
-                              _deleteSnack(context, BlocProvider.of<GitHubBloc>(context).listToDelete1);
+                              _deleteSnack(
+                                  context,
+                                  BlocProvider.of<GitHubBloc>(context)
+                                      .listToDelete1);
                               setState(() {
                                 _isVisible = false;
                                 _checkAllItems = false;
@@ -117,8 +119,7 @@ class _GitHubPageState extends State<GitHubPage> {
 
   void _deleteSnack(BuildContext context, list) {
     final snackBar = SnackBar(
-      content: Text(
-          'The items with id:"${list.toString()}" was deleted! '),
+      content: Text('The items with id:"${list.toString()}" was deleted! '),
       backgroundColor: Colors.lime,
     );
     ScaffoldMessenger.of(context).showSnackBar(snackBar);
@@ -140,7 +141,6 @@ class _GitHubPageState extends State<GitHubPage> {
     return BlocBuilder<GitHubBloc, GitHubState>(
         bloc: BlocProvider.of(context),
         builder: (BuildContext context, state) {
-          print('rebuilded state : $state');
           if (state is GitHubEmptyState) {
             return Center(child: Text('Press on the Search button'));
           } else if (state is GitHubLoaded) {
@@ -168,6 +168,7 @@ class _GitHubPageState extends State<GitHubPage> {
                             onChanged: (_) async {
                               BlocProvider.of<GitHubBloc>(context)
                                   .add(MarkCheckboxEvent(item.id));
+                             //                                                should be changed the next line
                               await sprint();
                               setState(() {
                                 BlocProvider.of<GitHubBloc>(context)
