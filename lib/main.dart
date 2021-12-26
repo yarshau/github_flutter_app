@@ -1,23 +1,23 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:github_flutter_app/github_bloc.dart';
-
+import 'package:provider/provider.dart';
+import 'github_client.dart';
 import 'github_page.dart';
+import 'github_repository.dart';
 
 void main() {
-  runApp(Git());
+  runApp(MultiProvider(providers: [
+    Provider<GitHubClient>(create: (_) => GitHubClient()),
+    Provider<GitHubRepository>(create: (_) => GitHubRepository()),
+    ChangeNotifierProvider<MyProvider>.value(value: MyProvider())
+  ], child: Git()));
 }
 
 class Git extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return BlocProvider<GitHubBloc>(
-        create: (BuildContext context) => GitHubBloc(),
-        lazy: false,
-        child: MaterialApp(
-          home: Scaffold(
-            body: GitHubPage(),
-          ),
-        ));
+    return MaterialApp(
+        home: Scaffold(
+      body: GitHubPage(),
+    ));
   }
 }

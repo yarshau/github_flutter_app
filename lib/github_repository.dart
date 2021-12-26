@@ -1,23 +1,10 @@
 import 'dart:async';
-
 import 'package:github_flutter_app/github_database.dart';
 import 'package:github_flutter_app/github_model.dart';
 import 'github_model.dart';
 import 'package:sqlbrite/sqlbrite.dart';
 
 class GitHubRepository {
-//  StreamController<bool> isDatabaseInitialized = StreamController();
-
-//  GitHubRepository() {
-////    initDb();
-//  }
-
-//  Future<void> initDb() async {
-//    final Database db = await dbHelper.getDatabase;
-//    _briteDatabase = BriteDatabase(db);
-//    isDatabaseInitialized.add(true);
-//  }
-
   static const String tableGit = 'git';
   static final DatabaseProvider dbHelper = DatabaseProvider();
 
@@ -36,6 +23,7 @@ class GitHubRepository {
     }
     await batch.commit();
   }
+
 
 //  Future<void> clear() async {
 //    print('inside clear method');

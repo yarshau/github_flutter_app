@@ -1,6 +1,8 @@
-import 'package:equatable/equatable.dart';
 
-abstract class GitHubEvents extends Equatable {}
+abstract class GitHubEvents {
+  const GitHubEvents();
+  List<Object?> get props => [];
+}
 
 class InitEvent extends GitHubEvents {
   @override
@@ -8,9 +10,9 @@ class InitEvent extends GitHubEvents {
 }
 
 class LoadedEvent extends GitHubEvents {
-  LoadedEvent(this.text);
+  const LoadedEvent(this.text);
 
-  String text;
+  final String text;
 
   @override
   List<Object?> get props => [text];
@@ -27,12 +29,11 @@ class MarkCheckboxEvent extends GitHubEvents {
   final int id;
 
   @override
-  List<Object?> get props => [];
+  List<Object?> get props => [id];
 }
 
 class MarkAllCheckboxEvent extends GitHubEvents {
-  MarkAllCheckboxEvent(this.list);
-  List<int> list;
+
   @override
-  List<Object?> get props => [list];
+  List<Object?> get props => [];
 }

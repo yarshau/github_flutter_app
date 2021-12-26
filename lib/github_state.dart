@@ -1,7 +1,10 @@
-import 'package:equatable/equatable.dart';
 import 'package:github_flutter_app/github_model.dart';
 
-abstract class GitHubState extends Equatable {}
+abstract class GitHubState{
+  const GitHubState();
+  List<Object?> get props => [];
+
+}
 
 class GitHubEmptyState extends GitHubState {
   @override
@@ -15,11 +18,12 @@ class GitHubInitial extends GitHubState {
 
 class GitHubLoaded extends GitHubState {
   final List<RepoInfo> loadedItems;
+  final List<int> listToDelete;
 
-  GitHubLoaded({required this.loadedItems});
+  GitHubLoaded({required this.loadedItems, required this.listToDelete});
 
   @override
-  List<Object?> get props => [loadedItems];
+  List<Object?> get props => [loadedItems, listToDelete];
 }
 
 class GitHubError extends GitHubState {
