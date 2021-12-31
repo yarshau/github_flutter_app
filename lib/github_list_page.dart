@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:github_flutter_app/details_github/details_page.dart';
 import 'package:github_flutter_app/github_bloc.dart';
 import 'package:github_flutter_app/github_client.dart';
 import 'package:github_flutter_app/github_event.dart';
@@ -55,7 +56,8 @@ class GitHubPageState extends State<GitHubPage> {
                 padding: EdgeInsets.symmetric(vertical: 8),
                 decoration: BoxDecoration(
                     border: Border(bottom: BorderSide(color: Colors.black))),
-                child: ListTile(
+                child: ListTile(onTap: () => Navigator.push(context,
+                  MaterialPageRoute(builder: (context) => DetailsPage(id: item.id))),
                   title: Text('${_count++}. Name: ${item.name}'),
                   subtitle: Column(children: [
                     Text('Id: ${item.id}'),
@@ -127,20 +129,33 @@ class GitHubPageState extends State<GitHubPage> {
         appBar: AppBar(title: Text('${myProvider.str}')),
         body: BlocProvider<GitHubBloc>(
             create: (BuildContext context) => _bloc,
-            lazy: false,
+            lazy: true,
             child: Column(children: <Widget>[
-              Container(
-                  width: 550,
-                  child: TextField(
-                    onChanged: (newData) {
-                      myProvider.changedField(newData);
-                    },
-                    decoration: InputDecoration(
-                        labelText: 'Input Repos name',
-                        prefixIcon: Icon(Icons.search_rounded),
-                        border: OutlineInputBorder()),
-                    controller: _controller,
-                  )),
+              SizedBox(
+                height: 10,
+              ),
+              Row(
+                children: [
+                  SizedBox(
+                    width: 20,
+                  ),
+                  Flexible(
+                      fit: FlexFit.tight,
+                      child: TextField(
+                        onChanged: (newData) {
+                          myProvider.changedField(newData);
+                        },
+                        decoration: InputDecoration(
+                            labelText: 'Input Repos name',
+                            prefixIcon: Icon(Icons.search_rounded),
+                            border: OutlineInputBorder()),
+                        controller: _controller,
+                      )),
+                  SizedBox(
+                    width: 20,
+                  )
+                ],
+              ),
               Expanded(
                 child: BlocBuilder<GitHubBloc, GitHubState>(
                     bloc: _bloc,
@@ -199,13 +214,15 @@ class GitHubPageState extends State<GitHubPage> {
   }
 }
 
+
 class MyProvider extends ChangeNotifier {
   String _appBarString = 'Changed Text';
 
   String get str => _appBarString;
 
-  changedField(String inputString) {
+  void changedField(String inputString) {
     _appBarString = inputString;
     notifyListeners();
   }
 }
+

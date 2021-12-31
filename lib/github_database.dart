@@ -31,7 +31,16 @@ class DatabaseProvider {
     id INTEGER,
     name TEXT,
     gitUrl TEXT,
-    avatarUrl BLOB
+    avatarUrl BLOB,
+    login TEXT,
+    fullName TEXT,
+    organizationsUrl TEXT,
+    licenseName TEXT,
+    language TEXT,
+    description TEXT,
+    url TEXT,
+    createdDate TEXT,
+    watchers INTEGER
     )
     ''');
   }

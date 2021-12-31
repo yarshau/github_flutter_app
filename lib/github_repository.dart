@@ -46,6 +46,15 @@ class GitHubRepository {
         );
   }
 
+  Future<RepoInfo> gitDetails(int id) async {
+    final _briteDatabase = await dbHelper.getDatabase;
+    List q = await _briteDatabase.query(tableGit, where: 'ID = $id');
+    Map<String, dynamic> data = q.first;
+
+    print('q first${data}');
+    return RepoInfo.fromDatabase(data);
+  }
+
   Future<void> deleteSelected(List list) async {
     print('list to DELETE ${list.length}');
     final _briteDatabase = await dbHelper.getDatabase;
