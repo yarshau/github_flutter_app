@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:github_flutter_app/details_github/details_cubit.dart';
 import 'package:github_flutter_app/github_repository.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class DetailsPage extends StatelessWidget {
@@ -11,22 +12,17 @@ class DetailsPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    DetailsCubit _detailsCubit = DetailsCubit(GitHubRepository(), id);
+    DetailsCubit _detailsCubit = DetailsCubit(Provider.of<GitHubRepository>(context), id);
     return BlocProvider(
         create: (_) => _detailsCubit,
         child: Material(
           child: Scaffold(
-            floatingActionButton: FloatingActionButton(
-              onPressed: () => _detailsCubit.fetchData(),
-            ),
             body: Container(child: BlocBuilder<DetailsCubit, DetailsState>(
-//                    buildWhen: _detailsCubit.fetchData(),
                 builder: (BuildContext context, state) {
               if (state is DetailsInitial) {
                 return Center(child: CircularProgressIndicator());
               } else if (state is DetailLoaded) {
                 return Scaffold(
-
                   body: Container(
                     child: Column(
                       children: [

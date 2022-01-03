@@ -19,6 +19,7 @@ class GitHubPage extends StatefulWidget {
 class GitHubPageState extends State<GitHubPage> {
   final _controller = TextEditingController();
   late final GitHubBloc _bloc;
+  late MyProvider myProvider = Provider.of<MyProvider>(context);
 
   @override
   void initState() {
@@ -123,7 +124,6 @@ class GitHubPageState extends State<GitHubPage> {
       );
     }
 
-    MyProvider myProvider = Provider.of<MyProvider>(context);
     return Scaffold(
         resizeToAvoidBottomInset: true,
         appBar: AppBar(title: Text('${myProvider.str}')),
@@ -212,7 +212,14 @@ class GitHubPageState extends State<GitHubPage> {
               )
             ])));
   }
+
+  @override
+  void dispose() {
+    myProvider.dispose();
+    super.dispose();
+  }
 }
+
 
 
 class MyProvider extends ChangeNotifier {
