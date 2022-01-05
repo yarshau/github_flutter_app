@@ -14,12 +14,13 @@ class GitHubClient {
       if (_response.statusCode == 200) {
         final List<RepoInfo> _result = [];
         Map<dynamic, dynamic> _map = json.decode(_response.body);
-        print ('mwaaaaap      $_map');
         List<dynamic> _items = _map['items'];
         for (int i = 0; i < _items.length; i++) {
+          Map<String, dynamic> ownerMap = _items[i]['owner'];
+          final image = await http.get(Uri.parse(ownerMap['avatar_url']));
+          ownerMap['avatar_url'] = image.bodyBytes.toString();
           _result.add(RepoInfo.fromJson(_items[i]));
         }
-        print('result $_result');
         return ResponseSuccess(_result);
       } else {
         int _status = _response.statusCode;

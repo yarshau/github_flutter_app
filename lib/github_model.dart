@@ -36,7 +36,7 @@ class RepoInfo extends GitHubResponse {
   final int id;
   final String name;
   final String gitUrl;
-  final String avatarUrl;
+  String avatarUrl;
   final Map? owner;
   final String login;
   final String fullName;

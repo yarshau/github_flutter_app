@@ -1,3 +1,4 @@
+import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:github_flutter_app/details_github/details_page.dart';
@@ -8,6 +9,7 @@ import 'package:github_flutter_app/github_model.dart';
 import 'package:github_flutter_app/github_repository.dart';
 import 'package:github_flutter_app/github_state.dart';
 import 'package:provider/provider.dart';
+import 'dart:convert';
 
 class GitHubPage extends StatefulWidget {
   GitHubPage({Key? key}) : super(key: key);
@@ -19,7 +21,7 @@ class GitHubPage extends StatefulWidget {
 class GitHubPageState extends State<GitHubPage> {
   final _controller = TextEditingController();
   late final GitHubBloc _bloc;
-  late MyProvider myProvider = Provider.of<MyProvider>(context);
+  late MyProvider _myProvider = Provider.of<MyProvider>(context);
 
   @override
   void initState() {
@@ -54,24 +56,31 @@ class GitHubPageState extends State<GitHubPage> {
         children: list
             .map(
               (item) => Container(
-                padding: EdgeInsets.symmetric(vertical: 8),
-                decoration: BoxDecoration(
-                    border: Border(bottom: BorderSide(color: Colors.black))),
-                child: ListTile(onTap: () => Navigator.push(context,
-                  MaterialPageRoute(builder: (context) => DetailsPage(id: item.id))),
-                  title: Text('${_count++}. Name: ${item.name}'),
-                  subtitle: Column(children: [
-                    Text('Id: ${item.id}'),
-                    Text('Url: ${item.gitUrl}')
-                  ]),
-                  trailing: Checkbox(
-                      value: listToDelete.contains(item.id),
-                      onChanged: (_) {
-                        _bloc.add(MarkCheckboxEvent(item.id));
-                        item.checkToDelete = !item.checkToDelete;
-                        print('listTOODELETE $listToDelete');
-                      }),
-                  leading: Image.network('${item.avatarUrl}'),
+//                padding: EdgeInsets.symmetric(vertical: 7),
+//                decoration: BoxDecoration(
+//                    border: Border(bottom: BorderSide(color: Colors.black))),
+                child: Card(
+                  child: ListTile(
+                    onTap: () => Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => DetailsPage(id: item.id))),
+                    title: Text('${_count++}. Name: ${item.name}'),
+                    subtitle: Column(children: [
+                      Text('Id: ${item.id}'),
+                      Text('Url: ${item.gitUrl}')
+                    ]),
+                    trailing: Checkbox(
+                        value: listToDelete.contains(item.id),
+                        onChanged: (_) {
+                          _bloc.add(MarkCheckboxEvent(item.id));
+                          item.checkToDelete = !item.checkToDelete;
+                          print('listTOODELETE $listToDelete');
+                        }),
+                    leading: Image.memory(Uint8List.fromList(
+                        json.decode(item.avatarUrl).cast<int>())),
+                    contentPadding: EdgeInsets.all(2),
+                  ),
                 ),
               ),
             )
@@ -126,7 +135,7 @@ class GitHubPageState extends State<GitHubPage> {
 
     return Scaffold(
         resizeToAvoidBottomInset: true,
-        appBar: AppBar(title: Text('${myProvider.str}')),
+        appBar: AppBar(title: Text('${_myProvider.str}')),
         body: BlocProvider<GitHubBloc>(
             create: (BuildContext context) => _bloc,
             lazy: true,
@@ -143,7 +152,7 @@ class GitHubPageState extends State<GitHubPage> {
                       fit: FlexFit.tight,
                       child: TextField(
                         onChanged: (newData) {
-                          myProvider.changedField(newData);
+                          _myProvider.changedField(newData);
                         },
                         decoration: InputDecoration(
                             labelText: 'Input Repos name',
@@ -215,12 +224,10 @@ class GitHubPageState extends State<GitHubPage> {
 
   @override
   void dispose() {
-    myProvider.dispose();
+    _myProvider.dispose();
     super.dispose();
   }
 }
-
-
 
 class MyProvider extends ChangeNotifier {
   String _appBarString = 'Changed Text';
@@ -232,4 +239,3 @@ class MyProvider extends ChangeNotifier {
     notifyListeners();
   }
 }
-

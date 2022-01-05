@@ -20,6 +20,7 @@ class Git extends StatelessWidget {
       ],
       child: MaterialApp(
         home: Scaffold(
+          backgroundColor: Colors.lime,
           body: GitHubPage(),
         ),
       ),
