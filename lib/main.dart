@@ -16,11 +16,9 @@ class Git extends StatelessWidget {
         Provider<GitHubClient>(create: (_) => GitHubClient()),
         Provider<GitHubRepository>(create: (_) => GitHubRepository()),
         ChangeNotifierProvider<MyProvider>.value(value: MyProvider()),
-//        ChangeNotifierProvider<MyProvider>(create:(_)=> MyProvider()),
       ],
       child: MaterialApp(
         home: Scaffold(
-          backgroundColor: Colors.lime,
           body: GitHubPage(),
         ),
       ),

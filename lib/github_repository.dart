@@ -24,20 +24,6 @@ class GitHubRepository {
     await batch.commit();
   }
 
-
-//  Future<void> clear() async {
-//    print('inside clear method');
-//    final db = await dbHelper.getDatabase;
-//    db.rawDelete('DELETE FROM $tableGit');
-//  }
-
-//  Future<bool> isNotEmpty() async {
-//    final db = await dbHelper.getDatabase;
-//    final List<Map<String, dynamic>> listMaps = await db.query(tableGit);
-//    final bool isNotEmpty = listMaps.isNotEmpty;
-//    return isNotEmpty;
-//  }
-
   Future<Stream<List<RepoInfo>>> subscribeOnUpdates() async {
     final _briteDatabase = await dbHelper.getDatabase;
 

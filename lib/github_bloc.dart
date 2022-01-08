@@ -72,6 +72,7 @@ class GitHubBloc extends Bloc<GitHubEvents, GitHubState> {
         checkAllItems = true;
         _listToDelete1 = loadedItems.map((item) => item.id).toList();
       }
+      _listToDelete1.isNotEmpty ? isVisible = true : isVisible = false;
       emit(GitHubLoaded(loadedItems: loadedItems,
           listToDelete: _listToDelete1,
       ));

@@ -1,5 +1,6 @@
 import 'dart:typed_data';
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:github_flutter_app/details_github/details_cubit.dart';
 import 'package:github_flutter_app/github_repository.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -9,81 +10,183 @@ import 'dart:convert';
 
 class DetailsPage extends StatefulWidget {
   final int id;
+  final String name;
 
-  DetailsPage({required this.id}) : super();
+  DetailsPage({required this.id, required this.name}) : super();
 
   @override
-  _DetailsPageState createState() => _DetailsPageState(id);
+  _DetailsPageState createState() => _DetailsPageState(id, name);
 }
 
 class _DetailsPageState extends State<DetailsPage> {
   double initX = 0;
   double initY = 0;
+  final int id;
+  final String name;
 
-  var id;
-
-  _DetailsPageState(this.id);
-
+  _DetailsPageState(this.id, this.name);
 
   @override
   Widget build(BuildContext context) {
     DetailsCubit _detailsCubit =
-        DetailsCubit(Provider.of<GitHubRepository>(context), id);
+        DetailsCubit(Provider.of<GitHubRepository>(context), id, name);
     return BlocProvider(
-        create: (_) => _detailsCubit,
-        child: Material(
-          child: Scaffold(
-            body: Container(child: BlocBuilder<DetailsCubit, DetailsState>(
+      create: (_) => _detailsCubit,
+      child: Material(
+        child: Scaffold(
+          appBar: AppBar(title: Text(name)),
+          body: Column(
+            children: [
+              SizedBox(height: 15),
+              BlocBuilder<DetailsCubit, DetailsState>(
                 builder: (BuildContext context, state) {
-              if (state is DetailsInitial) {
-                return Center(child: CircularProgressIndicator());
-              } else if (state is DetailLoaded) {
-                List avatar = json.decode(state.info.avatarUrl);
-                return Scaffold(
-                  body: SingleChildScrollView(
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            SizedBox(height: 60),
-                            Text('Full Name: ${state.info.fullName}'),
-                            Text('Login: ${state.info.login}'),
-                            Text('License Name: ${state.info.license}'),
-                            GestureDetector(
-                              child: Image.memory(
-                                Uint8List.fromList(avatar.cast<int>()),
-                                height: 350,
-                              ),
-                            ),
-                            SizedBox(
-                              height: 50,
-                            ),
-                            InkWell(
-                                onLongPress: () async {
-                                  await launch('${state.info.url}',
-                                      forceWebView: true);
-                                },
-                                child: Text('Url: ${state.info.url}')),
-                            Text('Name: ${state.info.name}'),
-                            Text('Desription: ${state.info.description}'),
-                            Text(
-                                'OrganizationUrl: ${state.info.organizationsUrl}'),
-                            Text('Created Date: ${state.info.createdDate}'),
-                            Text('Languages: ${state.info.language}'),
-                            Text('License: ${state.info.watchers}'),
-                          ],
-                        ),
-                      ],
-                    ),
-                  ),
-                );
-              } else {
-                return Text('No data found');
-              }
-            })),
+                  if (state is DetailsInitial) {
+                    return Center(child: CircularProgressIndicator());
+                  } else if (state is DetailLoaded) {
+                    return LayoutBuilder(
+                      builder: (context, constraints) {
+                        print(constraints.maxWidth);
+                        print(constraints.maxHeight);
+                        if (constraints.maxWidth < 775) {
+                          return portraitLayout(state);
+                        } else {
+                          return landscapeLayout(state);
+                        }
+                      },
+                    );
+                  } else {
+                    return Text('No data found');
+                  }
+                },
+              ),
+            ],
           ),
-        ));
+        ),
+      ),
+    );
+  }
+
+  Widget portraitLayout(state) {
+    List avatar = json.decode(state.info.avatarUrl);
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Container(height: MediaQuery.of(context).size.height*0.85,
+          child: SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Image.memory(
+                  Uint8List.fromList(avatar.cast<int>()),
+                  height: 350,
+                ),
+                defaultText('Login: ${state.info.login}'),
+                IconButton(
+                  onPressed: () async {
+                    await launch('${state.info.url}', forceSafariVC: true);
+                  },
+                  icon: Icon(FontAwesomeIcons.github),
+                  splashRadius: 10.0,
+                  iconSize: 50,
+                ),
+                defaultText('Full Name: ${state.info.fullName}'),
+                defaultText('License Name: ${state.info.license}'),
+                defaultText('Name: ${state.info.name}'),
+                Container(
+                    width: 350,
+                    child: defaultText('Desription: ${state.info.description}')),
+                Container(width: 350,
+                  child: InkWell(
+                      autofocus: true,
+                      onLongPress: () async {
+                        await launch('${state.info.url}', forceSafariVC: true);
+                      },
+                      child: defaultText('OrganizationUrl: ${state.info.organizationsUrl}')),
+                ),
+                defaultText('Created Date: ${state.info.createdDate}'),
+                defaultText('Languages: ${state.info.language}'),
+                defaultText('License: ${state.info.watchers}'),
+              ],
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget landscapeLayout(state) {
+    List avatar = json.decode(state.info.avatarUrl);
+    return Column(
+      children: [
+        Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            SizedBox(
+              width: 50,
+            ),
+            Column(
+              children: [
+                Image.memory(
+                  Uint8List.fromList(avatar.cast<int>()),
+                  height: MediaQuery.of(context).size.width * 0.25,
+                ),
+                defaultText('Login: ${state.info.login}'),
+                IconButton(
+                  onPressed: () async {
+                    await launch('${state.info.url}', forceSafariVC: true);
+                  },
+                  icon: Icon(FontAwesomeIcons.github),
+                  splashRadius: 10.0,
+                  iconSize: 50,
+                ),
+              ],
+            ),
+            SizedBox(
+              width: 50,
+            ),
+            Container(
+              height: MediaQuery.of(context).size.height * 0.7,
+              child: SingleChildScrollView(
+                scrollDirection: Axis.vertical,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    defaultText('Full Name: ${state.info.fullName}'),
+                    defaultText('License Name: ${state.info.license}'),
+                    defaultText('Name: ${state.info.name}'),
+                    Container(
+                        width: 400,
+                        child: defaultText(
+                            'Desription: ${state.info.description}')),
+                    InkWell(
+                        autofocus: true,
+                        onLongPress: () async {
+                          await launch('${state.info.url}',
+                              forceSafariVC: true);
+                        },
+                        child: defaultText(
+                            'OrganizationUrl: ${state.info.organizationsUrl}')),
+                    defaultText('Created Date: ${state.info.createdDate}'),
+                    defaultText('Languages: ${state.info.language}'),
+                    defaultText('License: ${state.info.watchers}'),
+                  ],
+                ),
+              ),
+            )
+          ],
+        ),
+      ],
+    );
+  }
+
+  Widget defaultText(String toDisplay) {
+    return Container(
+      padding: EdgeInsets.fromLTRB(0, 10, 0, 0),
+      child: Text(
+        '$toDisplay',
+        style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+      ),
+    );
   }
 }

@@ -5,9 +5,10 @@ import 'package:meta/meta.dart';
 
 class DetailsCubit extends Cubit<DetailsState> {
   final GitHubRepository gitHubRepository;
-  int id;
+  final int id;
+  final String name;
 
-  DetailsCubit(this.gitHubRepository, this.id) : super(DetailsInitial()) {
+  DetailsCubit(this.gitHubRepository, this.id, this.name) : super(DetailsInitial()) {
     fetchData();
   }
 
