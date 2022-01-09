@@ -15,10 +15,14 @@ class GitHubClient {
         final List<RepoInfo> _result = [];
         Map<dynamic, dynamic> _map = json.decode(_response.body);
         List<dynamic> _items = _map['items'];
+        print('$_items');
         for (int i = 0; i < _items.length; i++) {
           Map<String, dynamic> ownerMap = _items[i]['owner'];
+          print('owner MAP    $ownerMap');
           final image = await http.get(Uri.parse(ownerMap['avatar_url']));
+          print('imaage $image');
           ownerMap['avatar_url'] = image.bodyBytes.toString();
+          print('ownerMap  avatar_url ${ownerMap['avatar_url']}');
           _result.add(RepoInfo.fromJson(_items[i]));
         }
         return ResponseSuccess(_result);

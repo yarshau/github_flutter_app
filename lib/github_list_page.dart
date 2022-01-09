@@ -2,6 +2,7 @@ import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:github_flutter_app/chatting_screen.dart';
 import 'package:github_flutter_app/details_github/details_page.dart';
 import 'package:github_flutter_app/github_bloc.dart';
 import 'package:github_flutter_app/github_client.dart';
@@ -99,15 +100,17 @@ class GitHubPageState extends State<GitHubPage> {
     Widget showPage(List<int> listToDelete) {
       return Stack(
         children: [
-          TextButton(
-            child: Text('Search'),
-            onPressed: () {
-              if (_controller.text.isNotEmpty) {
-                _bloc.add(LoadedEvent(_controller.text));
-              } else {
-                return _emptySnack(context);
-              }
-            },
+          Center(
+            child: TextButton(
+              child: Text('Search'),
+              onPressed: () {
+                if (_controller.text.isNotEmpty) {
+                  _bloc.add(LoadedEvent(_controller.text));
+                } else {
+                  return _emptySnack(context);
+                }
+              },
+            ),
           ),
           Align(
             alignment: Alignment.centerRight,
@@ -144,35 +147,50 @@ class GitHubPageState extends State<GitHubPage> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.end,
           children: [
-            Center(
-              child: Row(mainAxisSize: MainAxisSize.min,
-                children: [
-                  IconButton(
-                    icon: Icon(Icons.call),
+            SizedBox(
+              height: 50,
+            ),
+            InkWell(
+              child: ListTile(
+                title: Text('Chatting'),
+                leading: Icon(FontAwesomeIcons.snapchat),
+              ),
+              onTap: () {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (BuildContext context) => ChattingScreen()));
+              },
+            ),
+            Spacer(),
+            Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                IconButton(
+                  icon: Icon(Icons.call),
+                  onPressed: () async {
+                    await launch('tel:<380968361508>');
+                  },
+                ),
+                IconButton(
+                  onPressed: () async {
+                    await launch('https://www.instagram.com/yar.shau/',
+                        forceSafariVC: true);
+                  },
+                  icon: Icon(FontAwesomeIcons.instagram),
+                ),
+                IconButton(
                     onPressed: () async {
-                      await launch('tel:<380968361508>');
-                    },
-                  ),
-                  IconButton(
-                    onPressed: () async {
-                      await launch('https://www.instagram.com/yar.shau/',
+                      await launch('https://github.com/yarshau/',
                           forceSafariVC: true);
                     },
-                    icon: Icon(FontAwesomeIcons.instagram),
-                  ),
-                  IconButton(
-                      onPressed: () async {
-                        await launch('https://github.com/yarshau/',
-                            forceSafariVC: true);
-                      },
-                      icon: Icon(FontAwesomeIcons.github)),
-                  IconButton(
-                      onPressed: () async {
-                        await launch('mailto:yarshau@gmail.com');
-                      },
-                      icon: Icon(Icons.mail_outline)),
-                ],
-              ),
+                    icon: Icon(FontAwesomeIcons.github)),
+                IconButton(
+                    onPressed: () async {
+                      await launch('mailto:yarshau@gmail.com');
+                    },
+                    icon: Icon(Icons.mail_outline)),
+              ],
             ),
             Text('Contacts'),
           ],
@@ -226,6 +244,15 @@ class GitHubPageState extends State<GitHubPage> {
                         showPage([]),
                         Text('Press on the Search button'),
                       ]);
+                    } else if (state is GitHubInitial) {
+                      return Column(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: [
+                          SizedBox(height: 35,),
+                          CircularProgressIndicator(),
+                          Text('Loading in progress...')
+                        ],
+                      );
                     } else if (state is GitHubLoaded) {
                       List<RepoInfo> list = state.loadedItems;
                       return Column(
@@ -235,14 +262,6 @@ class GitHubPageState extends State<GitHubPage> {
                           Expanded(
                             child: _buildRepoList(list, state.listToDelete),
                           )
-                        ],
-                      );
-                    } else if (state is GitHubInitial) {
-                      return Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          CircularProgressIndicator(),
-                          Text('Loading in progress...')
                         ],
                       );
                     } else if (state is GitHubError) {

@@ -31,6 +31,7 @@ class GitHubBloc extends Bloc<GitHubEvents, GitHubState> {
     );
 
     on<LoadedEvent>((event, emit) async {
+      emit (GitHubInitial());
       GitHubResponse _response = await gitHubClient.getItems(event.text);
       if (_response is ResponseSuccess) {
         gitHubRepository.insert(_response.items);
