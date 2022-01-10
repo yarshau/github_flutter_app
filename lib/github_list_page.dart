@@ -24,7 +24,7 @@ class GitHubPage extends StatefulWidget {
 class GitHubPageState extends State<GitHubPage> {
   final _controller = TextEditingController();
   late final GitHubBloc _bloc;
-  late MyProvider _myProvider = Provider.of<MyProvider>(context);
+  late final MyProvider _myProvider = Provider.of<MyProvider>(context);
 
   @override
   void initState() {

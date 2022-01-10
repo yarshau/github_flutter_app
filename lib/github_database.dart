@@ -9,7 +9,7 @@ class DatabaseProvider {
   static final DatabaseProvider db =
       DatabaseProvider._privateEmptyConstructor();
   Database? database;
-  late BriteDatabase _briteDatabase;
+  late final BriteDatabase _briteDatabase;
 
   Future<BriteDatabase> get getDatabase async {
     if (database == null) {
@@ -24,7 +24,7 @@ class DatabaseProvider {
   }
 
   Future<void> _createDB(Database db, int version) async {
-    var streamDb = BriteDatabase(db);
+    final streamDb = BriteDatabase(db);
     await streamDb.execute('''
     CREATE TABLE git(
     id INTEGER,

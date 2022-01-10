@@ -10,13 +10,13 @@ class GitHubRepository {
 
   Future<void> insert(List<RepoInfo> items) async {
     print('inside insert method');
-    List<Map> existedId;
+    List<Map> _existedId;
     final _briteDatabase = await dbHelper.getDatabase;
     final batch = _briteDatabase.batch();
     for (var item in items) {
-      existedId =
+      _existedId =
           await _briteDatabase.query(tableGit, where: 'id = ${item.id}');
-      if (existedId.isEmpty) {
+      if (_existedId.isEmpty) {
         batch.insert(tableGit, item.toMap(),
             conflictAlgorithm: ConflictAlgorithm.replace);
       }
@@ -35,14 +35,12 @@ class GitHubRepository {
   Future<RepoInfo> gitDetails(int id) async {
     final _briteDatabase = await dbHelper.getDatabase;
     List q = await _briteDatabase.query(tableGit, where: 'ID = $id');
+    print('rrrrrr ${q.runtimeType}');
     Map<String, dynamic> data = q.first;
-
-    print('q first${data}');
     return RepoInfo.fromDatabase(data);
   }
 
   Future<void> deleteSelected(List list) async {
-    print('list to DELETE ${list.length}');
     final _briteDatabase = await dbHelper.getDatabase;
     final batch = _briteDatabase.batch();
     for (int item in list) {
