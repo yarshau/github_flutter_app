@@ -97,7 +97,7 @@ class GitHubPageState extends State<GitHubPage> {
       );
     }
 
-    Widget showPage([List<int> listToDelete = const []]) {
+    Widget _showPage([List<int> listToDelete = const []]) {
       return Stack(
         children: [
           Align(
@@ -177,7 +177,7 @@ class GitHubPageState extends State<GitHubPage> {
                     print('state $state');
                     if (state is GitHubEmptyState) {
                       return Column(children: [
-                        showPage(),
+                        _showPage(),
                         Text('Press on the Search button'),
                       ]);
                     } else if (state is GitHubInitial) {
@@ -196,7 +196,7 @@ class GitHubPageState extends State<GitHubPage> {
                       return Column(
                         children: [
                           Container(
-                              child: showPage(state.listToDelete)
+                              child: _showPage(state.listToDelete)
                              ),
                           Expanded(
                             child: _buildRepoList(list, state.listToDelete),
@@ -207,7 +207,7 @@ class GitHubPageState extends State<GitHubPage> {
                       return Container(
                         child: Column(
                           children: [
-                            showPage(),
+                            _showPage(),
                             Text('The status code is: ${state.statusCode}'),
                             Text('The reason is: ${state.reason}'),
                           ],
@@ -217,7 +217,7 @@ class GitHubPageState extends State<GitHubPage> {
                       return SingleChildScrollView(
                         child: Column(
                           children: [
-                            showPage(),
+                            _showPage(),
                             Text(
                                 'No data was found on GitHub with this Search input'),
                             Image.asset('assets/no_data_found.png'),
