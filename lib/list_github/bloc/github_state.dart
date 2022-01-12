@@ -1,4 +1,4 @@
-import 'package:github_flutter_app/github_model.dart';
+import 'package:github_flutter_app/api/github_model.dart';
 
 abstract class GitHubState{
   const GitHubState();

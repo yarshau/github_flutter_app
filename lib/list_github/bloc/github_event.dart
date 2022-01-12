@@ -1,6 +1,6 @@
-
 abstract class GitHubEvents {
   const GitHubEvents();
+
   List<Object?> get props => [];
 }
 
@@ -24,7 +24,7 @@ class DeleteItemsEvent extends GitHubEvents {
 }
 
 class MarkCheckboxEvent extends GitHubEvents {
-  MarkCheckboxEvent(this.id);
+  const MarkCheckboxEvent(this.id);
 
   final int id;
 
@@ -33,7 +33,6 @@ class MarkCheckboxEvent extends GitHubEvents {
 }
 
 class MarkAllCheckboxEvent extends GitHubEvents {
-
   @override
   List<Object?> get props => [];
 }

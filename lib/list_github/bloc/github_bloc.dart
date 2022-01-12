@@ -1,8 +1,8 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:github_flutter_app/github_repository.dart';
-import 'package:github_flutter_app/github_state.dart';
-import 'package:github_flutter_app/github_client.dart';
-import 'package:github_flutter_app/github_model.dart';
+import 'package:github_flutter_app/db/github_repository.dart';
+import 'package:github_flutter_app/list_github/bloc/github_state.dart';
+import 'package:github_flutter_app/api/github_client.dart';
+import 'package:github_flutter_app/api/github_model.dart';
 import 'github_event.dart';
 
 class GitHubBloc extends Bloc<GitHubEvents, GitHubState> {
@@ -13,31 +13,28 @@ class GitHubBloc extends Bloc<GitHubEvents, GitHubState> {
   bool isVisible = false;
   bool checkAllItems = false;
 
-  GitHubBloc(this._gitHubClient, this._gitHubRepository)
-      : super(GitHubEmptyState()) {
+  GitHubBloc(this._gitHubClient, this._gitHubRepository) : super(GitHubEmptyState()) {
     _gitHubRepository.subscribeOnUpdates().then(
-          (stream) =>
-          stream.listen((items) {
+          (stream) => stream.listen((items) {
             _loadedItems = items;
             print('items from subscribeOn : $items');
             if (items.isEmpty) {
               emit(GitHubEmptyState());
             } else {
-              emit(GitHubLoaded(
-                  loadedItems: items,
-                  listToDelete: _listToDelete1));
+              emit(GitHubLoaded(loadedItems: items, listToDelete: _listToDelete1));
             }
           }),
-    );
+        );
 
     on<LoadedEvent>((event, emit) async {
-      emit (GitHubInitial());
+      if (_loadedItems.isEmpty) {
+        emit(GitHubInitial());
+      }
       GitHubResponse _response = await _gitHubClient.getItems(event.text);
       if (_response is ResponseSuccess) {
         _gitHubRepository.insert(_response.items);
       } else if (_response is ResponseError) {
-        emit(GitHubError(
-            reason: _response.reasonPhrase, statusCode: _response.statusCode));
+        emit(GitHubError(reason: _response.reasonPhrase, statusCode: _response.statusCode));
       }
     });
 
@@ -58,10 +55,9 @@ class GitHubBloc extends Bloc<GitHubEvents, GitHubState> {
       } else {
         _listToDelete1.add(event.id);
       }
-      _listToDelete1.isNotEmpty ? isVisible = true : isVisible = false;
-      checkAllItems ? checkAllItems = false : null;
-      emit(GitHubLoaded(loadedItems: _loadedItems,
-          listToDelete: _listToDelete1));
+      isVisible = _listToDelete1.isNotEmpty;
+      checkAllItems = !checkAllItems;
+      emit(GitHubLoaded(loadedItems: _loadedItems, listToDelete: _listToDelete1));
       print('_listToDelete1 $_listToDelete1');
     });
 
@@ -74,8 +70,9 @@ class GitHubBloc extends Bloc<GitHubEvents, GitHubState> {
         _listToDelete1 = _loadedItems.map((item) => item.id).toList();
       }
       _listToDelete1.isNotEmpty ? isVisible = true : isVisible = false;
-      emit(GitHubLoaded(loadedItems: _loadedItems,
-          listToDelete: _listToDelete1,
+      emit(GitHubLoaded(
+        loadedItems: _loadedItems,
+        listToDelete: _listToDelete1,
       ));
       print('_listToDELETE: $_listToDelete1');
     });

@@ -1,6 +1,6 @@
 import 'dart:convert';
 import 'package:connectivity/connectivity.dart';
-import 'package:github_flutter_app/github_model.dart';
+import 'package:github_flutter_app/api/github_model.dart';
 import 'package:http/http.dart' as http;
 
 class GitHubClient {

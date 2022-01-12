@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'github_client.dart';
-import 'github_list_page.dart';
-import 'github_repository.dart';
+import 'api/github_client.dart';
+import 'list_github/github_list_page_widget.dart';
+import 'db/github_repository.dart';
 
 void main() {
   runApp(Git());

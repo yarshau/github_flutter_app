@@ -1,7 +1,7 @@
 import 'dart:async';
-import 'package:github_flutter_app/github_database.dart';
-import 'package:github_flutter_app/github_model.dart';
-import 'github_model.dart';
+import 'package:github_flutter_app/db/github_database.dart';
+import 'package:github_flutter_app/api/github_model.dart';
+import '../api/github_model.dart';
 import 'package:sqlbrite/sqlbrite.dart';
 
 class GitHubRepository {

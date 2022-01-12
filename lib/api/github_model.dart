@@ -8,9 +8,9 @@ class ResponseError extends GitHubResponse {
 }
 
 class ResponseSuccess extends GitHubResponse {
-  final List<RepoInfo> items;
-
   ResponseSuccess(this.items);
+
+  final List<RepoInfo> items;
 }
 
 class RepoInfo extends GitHubResponse {
@@ -52,22 +52,23 @@ class RepoInfo extends GitHubResponse {
 
   factory RepoInfo.fromJson(Map<String, dynamic> json) {
     return RepoInfo(
-        id: json['id'],
-        name: json['name'],
-        gitUrl: json['git_url'],
-        owner: json['owner'],
-        avatarUrl: json['owner']['avatar_url'],
-        login: json['owner']['login'],
-        fullName: json['full_name'],
-        organizationsUrl: json['owner']['organizations_url'],
-        license: json['license'],
-        licenseName: json['owner']['type'],
-        language: json['language'],
-        description: json['description'],
-        url: json['url'],
-        createdDate: json['created_at'],
-        watchers: json['watchers'],
-        checkToDelete: false);
+      id: json['id'],
+      name: json['name'],
+      gitUrl: json['git_url'],
+      owner: json['owner'],
+      avatarUrl: json['owner']['avatar_url'],
+      login: json['owner']['login'],
+      fullName: json['full_name'],
+      organizationsUrl: json['owner']['organizations_url'],
+      license: json['license'],
+      licenseName: json['owner']['type'],
+      language: json['language'],
+      description: json['description'],
+      url: json['url'],
+      createdDate: json['created_at'],
+      watchers: json['watchers'],
+      checkToDelete: false,
+    );
   }
 
   Map<String, dynamic> toMap() {
@@ -90,20 +91,21 @@ class RepoInfo extends GitHubResponse {
 
   factory RepoInfo.fromDatabase(Map<String, dynamic> map) {
     return RepoInfo(
-        id: map['id'],
-        name: map['name'],
-        gitUrl: map['gitUrl'],
-        avatarUrl: map['avatarUrl'],
-        login: map['login'],
-        fullName: map['fullName'],
-        organizationsUrl: map['organizationsUrl'],
-        license: map['license'],
-        licenseName: map['type'],
-        language: map['language'],
-        description: map['description'],
-        url: map['url'],
-        createdDate: map['createdDate'],
-        watchers: map['watchers'],
-        checkToDelete: false);
+      id: map['id'],
+      name: map['name'],
+      gitUrl: map['gitUrl'],
+      avatarUrl: map['avatarUrl'],
+      login: map['login'],
+      fullName: map['fullName'],
+      organizationsUrl: map['organizationsUrl'],
+      license: map['license'],
+      licenseName: map['type'],
+      language: map['language'],
+      description: map['description'],
+      url: map['url'],
+      createdDate: map['createdDate'],
+      watchers: map['watchers'],
+      checkToDelete: false,
+    );
   }
 }
