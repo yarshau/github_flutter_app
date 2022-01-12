@@ -19,8 +19,6 @@ class DetailsPage extends StatefulWidget {
 }
 
 class _DetailsPageState extends State<DetailsPage> {
-  double initX = 0;
-  double initY = 0;
   final int id;
   final String name;
 
@@ -71,7 +69,8 @@ class _DetailsPageState extends State<DetailsPage> {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        Container(height: MediaQuery.of(context).size.height*0.85,
+        Container(
+          height: MediaQuery.of(context).size.height * 0.85,
           child: SingleChildScrollView(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -94,14 +93,17 @@ class _DetailsPageState extends State<DetailsPage> {
                 _defaultText('Name: ${state.info.name}'),
                 Container(
                     width: 350,
-                    child: _defaultText('Desription: ${state.info.description}')),
-                Container(width: 350,
+                    child:
+                        _defaultText('Desription: ${state.info.description}')),
+                Container(
+                  width: 350,
                   child: InkWell(
                       autofocus: true,
                       onLongPress: () async {
                         await launch('${state.info.url}', forceSafariVC: true);
                       },
-                      child: _defaultText('OrganizationUrl: ${state.info.organizationsUrl}')),
+                      child: _defaultText(
+                          'OrganizationUrl: ${state.info.organizationsUrl}')),
                 ),
                 _defaultText('Created Date: ${state.info.createdDate}'),
                 _defaultText('Languages: ${state.info.language}'),

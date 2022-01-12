@@ -26,6 +26,4 @@ class Git extends StatelessWidget {
       ),
     );
   }
-
-
 }

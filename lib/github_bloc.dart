@@ -6,19 +6,19 @@ import 'package:github_flutter_app/github_model.dart';
 import 'github_event.dart';
 
 class GitHubBloc extends Bloc<GitHubEvents, GitHubState> {
-  final GitHubClient gitHubClient;
-  final GitHubRepository gitHubRepository;
+  final GitHubClient _gitHubClient;
+  final GitHubRepository _gitHubRepository;
   List<int> _listToDelete1 = [];
-  List<RepoInfo> loadedItems = [];
+  List<RepoInfo> _loadedItems = [];
   bool isVisible = false;
   bool checkAllItems = false;
 
-  GitHubBloc(this.gitHubClient, this.gitHubRepository)
+  GitHubBloc(this._gitHubClient, this._gitHubRepository)
       : super(GitHubEmptyState()) {
-    gitHubRepository.subscribeOnUpdates().then(
+    _gitHubRepository.subscribeOnUpdates().then(
           (stream) =>
           stream.listen((items) {
-            loadedItems = items;
+            _loadedItems = items;
             print('items from subscribeOn : $items');
             if (items.isEmpty) {
               emit(GitHubEmptyState());
@@ -32,9 +32,9 @@ class GitHubBloc extends Bloc<GitHubEvents, GitHubState> {
 
     on<LoadedEvent>((event, emit) async {
       emit (GitHubInitial());
-      GitHubResponse _response = await gitHubClient.getItems(event.text);
+      GitHubResponse _response = await _gitHubClient.getItems(event.text);
       if (_response is ResponseSuccess) {
-        gitHubRepository.insert(_response.items);
+        _gitHubRepository.insert(_response.items);
       } else if (_response is ResponseError) {
         emit(GitHubError(
             reason: _response.reasonPhrase, statusCode: _response.statusCode));
@@ -47,7 +47,7 @@ class GitHubBloc extends Bloc<GitHubEvents, GitHubState> {
     });
 
     on<DeleteItemsEvent>((event, emit) async {
-      await gitHubRepository.deleteSelected(_listToDelete1);
+      await _gitHubRepository.deleteSelected(_listToDelete1);
       _listToDelete1.clear();
       isVisible = false;
     });
@@ -60,7 +60,7 @@ class GitHubBloc extends Bloc<GitHubEvents, GitHubState> {
       }
       _listToDelete1.isNotEmpty ? isVisible = true : isVisible = false;
       checkAllItems ? checkAllItems = false : null;
-      emit(GitHubLoaded(loadedItems: loadedItems,
+      emit(GitHubLoaded(loadedItems: _loadedItems,
           listToDelete: _listToDelete1));
       print('_listToDelete1 $_listToDelete1');
     });
@@ -71,10 +71,10 @@ class GitHubBloc extends Bloc<GitHubEvents, GitHubState> {
         _listToDelete1.clear();
       } else {
         checkAllItems = true;
-        _listToDelete1 = loadedItems.map((item) => item.id).toList();
+        _listToDelete1 = _loadedItems.map((item) => item.id).toList();
       }
       _listToDelete1.isNotEmpty ? isVisible = true : isVisible = false;
-      emit(GitHubLoaded(loadedItems: loadedItems,
+      emit(GitHubLoaded(loadedItems: _loadedItems,
           listToDelete: _listToDelete1,
       ));
       print('_listToDELETE: $_listToDelete1');
