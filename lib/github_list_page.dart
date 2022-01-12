@@ -234,13 +234,3 @@ class GitHubPageState extends State<GitHubPage> {
   }
 }
 
-class MyProvider extends ChangeNotifier {
-  String _appBarString = 'Changed Text';
-
-  String get str => _appBarString;
-
-  void changedField(String inputString) {
-    _appBarString = inputString;
-    notifyListeners();
-  }
-}
