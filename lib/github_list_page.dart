@@ -1,8 +1,6 @@
 import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:github_flutter_app/chatting_screen.dart';
 import 'package:github_flutter_app/details_github/details_page.dart';
 import 'package:github_flutter_app/github_bloc.dart';
 import 'package:github_flutter_app/github_client.dart';
@@ -12,7 +10,6 @@ import 'package:github_flutter_app/github_repository.dart';
 import 'package:github_flutter_app/github_state.dart';
 import 'package:provider/provider.dart';
 import 'dart:convert';
-import 'package:url_launcher/url_launcher.dart';
 
 class GitHubPage extends StatefulWidget {
   GitHubPage({Key? key}) : super(key: key);
@@ -24,7 +21,6 @@ class GitHubPage extends StatefulWidget {
 class GitHubPageState extends State<GitHubPage> {
   final _controller = TextEditingController();
   late final GitHubBloc _bloc;
-  late final MyProvider _myProvider = Provider.of<MyProvider>(context);
 
   @override
   void initState() {
@@ -86,8 +82,12 @@ class GitHubPageState extends State<GitHubPage> {
                           item.checkToDelete = !item.checkToDelete;
                           print('listTOODELETE $listToDelete');
                         }),
-                    leading: Image.memory(Uint8List.fromList(
-                        json.decode(item.avatarUrl).cast<int>())),
+                    leading: Image.memory(
+                      Uint8List.fromList(
+                          json.decode(item.avatarUrl).cast<int>()),
+                      key: Key(item.avatarUrl),
+                      gaplessPlayback: true,
+                    ),
                     contentPadding: EdgeInsets.all(2),
                   ),
                 ),
@@ -97,21 +97,9 @@ class GitHubPageState extends State<GitHubPage> {
       );
     }
 
-    Widget showPage(List<int> listToDelete) {
+    Widget showPage([List<int> listToDelete = const []]) {
       return Stack(
         children: [
-          Center(
-            child: TextButton(
-              child: Text('Search'),
-              onPressed: () {
-                if (_controller.text.isNotEmpty) {
-                  _bloc.add(LoadedEvent(_controller.text));
-                } else {
-                  return _emptySnack(context);
-                }
-              },
-            ),
-          ),
           Align(
             alignment: Alignment.centerRight,
             child: Row(
@@ -142,67 +130,8 @@ class GitHubPageState extends State<GitHubPage> {
       );
     }
 
-    Widget Contacts() {
-      return Drawer(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.end,
-          children: [
-            SizedBox(
-              height: 50,
-            ),
-            InkWell(
-              child: ListTile(
-                title: Text('Chatting'),
-                leading: Icon(FontAwesomeIcons.snapchat),
-              ),
-              onTap: () {
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (BuildContext context) => ChattingScreen()));
-              },
-            ),
-            Spacer(),
-            Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                IconButton(
-                  icon: Icon(Icons.call),
-                  onPressed: () async {
-                    await launch('tel:<380968361508>');
-                  },
-                ),
-                IconButton(
-                  onPressed: () async {
-                    await launch('https://www.instagram.com/yar.shau/',
-                        forceSafariVC: true);
-                  },
-                  icon: Icon(FontAwesomeIcons.instagram),
-                ),
-                IconButton(
-                    onPressed: () async {
-                      await launch('https://github.com/yarshau/',
-                          forceSafariVC: true);
-                    },
-                    icon: Icon(FontAwesomeIcons.github)),
-                IconButton(
-                    onPressed: () async {
-                      await launch('mailto:yarshau@gmail.com');
-                    },
-                    icon: Icon(Icons.mail_outline)),
-              ],
-            ),
-            Text('Contacts'),
-          ],
-        ),
-      );
-    }
-
     return Scaffold(
-      backgroundColor: Colors.white12,
-      resizeToAvoidBottomInset: true,
-      appBar: AppBar(title: Text('${_myProvider.str}')),
-      drawer: Contacts(),
+      appBar: AppBar(title: Text('GitHub Flutter App')),
       body: BlocProvider<GitHubBloc>(
         create: (BuildContext context) => _bloc,
         lazy: true,
@@ -220,13 +149,19 @@ class GitHubPageState extends State<GitHubPage> {
                     fit: FlexFit.tight,
                     child: TextField(
                       autofocus: false,
-                      onChanged: (newData) {
-                        _myProvider.changedField(newData);
-                      },
                       decoration: InputDecoration(
                           labelText: 'Input Repos name',
-                          prefixIcon: Icon(Icons.search_rounded),
-                          border: OutlineInputBorder()),
+                          border: OutlineInputBorder(),
+                          suffixIcon: IconButton(
+                            icon: Icon(Icons.search_rounded),
+                            onPressed: () {
+                              if (_controller.text.isNotEmpty) {
+                                _bloc.add(LoadedEvent(_controller.text));
+                              } else {
+                                return _emptySnack(context);
+                              }
+                            },
+                          )),
                       controller: _controller,
                     )),
                 SizedBox(
@@ -234,6 +169,7 @@ class GitHubPageState extends State<GitHubPage> {
                 )
               ],
             ),
+            SizedBox(height: 5,),
             Expanded(
               child: BlocBuilder<GitHubBloc, GitHubState>(
                   bloc: _bloc,
@@ -241,14 +177,16 @@ class GitHubPageState extends State<GitHubPage> {
                     print('state $state');
                     if (state is GitHubEmptyState) {
                       return Column(children: [
-                        showPage([]),
+                        showPage(),
                         Text('Press on the Search button'),
                       ]);
                     } else if (state is GitHubInitial) {
                       return Column(
                         mainAxisAlignment: MainAxisAlignment.start,
                         children: [
-                          SizedBox(height: 35,),
+                          SizedBox(
+                            height: 35,
+                          ),
                           CircularProgressIndicator(),
                           Text('Loading in progress...')
                         ],
@@ -258,7 +196,8 @@ class GitHubPageState extends State<GitHubPage> {
                       return Column(
                         children: [
                           Container(
-                              height: 50, child: showPage(state.listToDelete)),
+                              child: showPage(state.listToDelete)
+                             ),
                           Expanded(
                             child: _buildRepoList(list, state.listToDelete),
                           )
@@ -268,7 +207,7 @@ class GitHubPageState extends State<GitHubPage> {
                       return Container(
                         child: Column(
                           children: [
-                            showPage([]),
+                            showPage(),
                             Text('The status code is: ${state.statusCode}'),
                             Text('The reason is: ${state.reason}'),
                           ],
@@ -278,7 +217,7 @@ class GitHubPageState extends State<GitHubPage> {
                       return SingleChildScrollView(
                         child: Column(
                           children: [
-                            showPage([]),
+                            showPage(),
                             Text(
                                 'No data was found on GitHub with this Search input'),
                             Image.asset('assets/no_data_found.png'),
@@ -292,12 +231,6 @@ class GitHubPageState extends State<GitHubPage> {
         ),
       ),
     );
-  }
-
-  @override
-  void dispose() {
-    _myProvider.dispose();
-    super.dispose();
   }
 }
 

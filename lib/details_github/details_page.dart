@@ -80,7 +80,7 @@ class _DetailsPageState extends State<DetailsPage> {
                   Uint8List.fromList(avatar.cast<int>()),
                   height: 350,
                 ),
-                defaultText('Login: ${state.info.login}'),
+                _defaultText('Login: ${state.info.login}'),
                 IconButton(
                   onPressed: () async {
                     await launch('${state.info.url}', forceSafariVC: true);
@@ -89,23 +89,23 @@ class _DetailsPageState extends State<DetailsPage> {
                   splashRadius: 10.0,
                   iconSize: 50,
                 ),
-                defaultText('Full Name: ${state.info.fullName}'),
-                defaultText('License Name: ${state.info.license}'),
-                defaultText('Name: ${state.info.name}'),
+                _defaultText('Full Name: ${state.info.fullName}'),
+                _defaultText('License Name: ${state.info.license}'),
+                _defaultText('Name: ${state.info.name}'),
                 Container(
                     width: 350,
-                    child: defaultText('Desription: ${state.info.description}')),
+                    child: _defaultText('Desription: ${state.info.description}')),
                 Container(width: 350,
                   child: InkWell(
                       autofocus: true,
                       onLongPress: () async {
                         await launch('${state.info.url}', forceSafariVC: true);
                       },
-                      child: defaultText('OrganizationUrl: ${state.info.organizationsUrl}')),
+                      child: _defaultText('OrganizationUrl: ${state.info.organizationsUrl}')),
                 ),
-                defaultText('Created Date: ${state.info.createdDate}'),
-                defaultText('Languages: ${state.info.language}'),
-                defaultText('License: ${state.info.watchers}'),
+                _defaultText('Created Date: ${state.info.createdDate}'),
+                _defaultText('Languages: ${state.info.language}'),
+                _defaultText('License: ${state.info.watchers}'),
               ],
             ),
           ),
@@ -130,7 +130,7 @@ class _DetailsPageState extends State<DetailsPage> {
                   Uint8List.fromList(avatar.cast<int>()),
                   height: MediaQuery.of(context).size.width * 0.25,
                 ),
-                defaultText('Login: ${state.info.login}'),
+                _defaultText('Login: ${state.info.login}'),
                 IconButton(
                   onPressed: () async {
                     await launch('${state.info.url}', forceSafariVC: true);
@@ -152,12 +152,12 @@ class _DetailsPageState extends State<DetailsPage> {
                   mainAxisAlignment: MainAxisAlignment.start,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    defaultText('Full Name: ${state.info.fullName}'),
-                    defaultText('License Name: ${state.info.license}'),
-                    defaultText('Name: ${state.info.name}'),
+                    _defaultText('Full Name: ${state.info.fullName}'),
+                    _defaultText('License Name: ${state.info.license}'),
+                    _defaultText('Name: ${state.info.name}'),
                     Container(
                         width: 400,
-                        child: defaultText(
+                        child: _defaultText(
                             'Desription: ${state.info.description}')),
                     InkWell(
                         autofocus: true,
@@ -165,11 +165,11 @@ class _DetailsPageState extends State<DetailsPage> {
                           await launch('${state.info.url}',
                               forceSafariVC: true);
                         },
-                        child: defaultText(
+                        child: _defaultText(
                             'OrganizationUrl: ${state.info.organizationsUrl}')),
-                    defaultText('Created Date: ${state.info.createdDate}'),
-                    defaultText('Languages: ${state.info.language}'),
-                    defaultText('License: ${state.info.watchers}'),
+                    _defaultText('Created Date: ${state.info.createdDate}'),
+                    _defaultText('Languages: ${state.info.language}'),
+                    _defaultText('License: ${state.info.watchers}'),
                   ],
                 ),
               ),
@@ -180,7 +180,7 @@ class _DetailsPageState extends State<DetailsPage> {
     );
   }
 
-  Widget defaultText(String toDisplay) {
+  Widget _defaultText(String toDisplay) {
     return Container(
       padding: EdgeInsets.fromLTRB(0, 10, 0, 0),
       child: Text(

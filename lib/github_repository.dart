@@ -34,8 +34,7 @@ class GitHubRepository {
 
   Future<RepoInfo> gitDetails(int id) async {
     final _briteDatabase = await dbHelper.getDatabase;
-    List q = await _briteDatabase.query(tableGit, where: 'ID = $id');
-    print('rrrrrr ${q.runtimeType}');
+    List<Map<String, Object?>> q = await _briteDatabase.query(tableGit, where: 'ID = $id');
     Map<String, dynamic> data = q.first;
     return RepoInfo.fromDatabase(data);
   }
