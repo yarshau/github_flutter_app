@@ -11,8 +11,6 @@ class ResponseSuccess extends GitHubResponse {
   final List<RepoInfo> items;
 
   ResponseSuccess(this.items);
-
-  final List<RepoInfo> items;
 }
 
 class RepoInfo extends GitHubResponse {
