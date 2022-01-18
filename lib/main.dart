@@ -1,10 +1,16 @@
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:github_flutter_app/login/login_page.dart';
 import 'package:provider/provider.dart';
-import 'api/github_client.dart';
-import 'list_github/github_list_page_widget.dart';
-import 'db/github_repository.dart';
+import 'github_client.dart';
+import 'github_list_page.dart';
+import 'github_repository.dart';
 
-void main() {
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  if (Firebase.apps.isEmpty) {
+    await Firebase.initializeApp();
+  }
   runApp(Git());
 }
 
@@ -15,13 +21,12 @@ class Git extends StatelessWidget {
       providers: [
         Provider<GitHubClient>(create: (_) => GitHubClient()),
         Provider<GitHubRepository>(create: (_) => GitHubRepository()),
+        ChangeNotifierProvider<MyProvider>.value(value: MyProvider()),
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
         home: Scaffold(
-          backgroundColor: Colors.white12,
-          resizeToAvoidBottomInset: true,
-          body: GitHubPage(),
+          body: LoginPage(),
         ),
       ),
     );

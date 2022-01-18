@@ -8,6 +8,8 @@ class ResponseError extends GitHubResponse {
 }
 
 class ResponseSuccess extends GitHubResponse {
+  final List<RepoInfo> items;
+
   ResponseSuccess(this.items);
 
   final List<RepoInfo> items;
@@ -91,21 +93,20 @@ class RepoInfo extends GitHubResponse {
 
   factory RepoInfo.fromDatabase(Map<String, dynamic> map) {
     return RepoInfo(
-      id: map['id'],
-      name: map['name'],
-      gitUrl: map['gitUrl'],
-      avatarUrl: map['avatarUrl'],
-      login: map['login'],
-      fullName: map['fullName'],
-      organizationsUrl: map['organizationsUrl'],
-      license: map['license'],
-      licenseName: map['type'],
-      language: map['language'],
-      description: map['description'],
-      url: map['url'],
-      createdDate: map['createdDate'],
-      watchers: map['watchers'],
-      checkToDelete: false,
-    );
+        id: map['id'],
+        name: map['name'],
+        gitUrl: map['gitUrl'],
+        avatarUrl: map['avatarUrl'],
+        login: map['login'],
+        fullName: map['fullName'],
+        organizationsUrl: map['organizationsUrl'],
+        license: map['license'],
+        licenseName: map['type'],
+        language: map['language'],
+        description: map['description'],
+        url: map['url'],
+        createdDate: map['createdDate'],
+        watchers: map['watchers'],
+        checkToDelete: false);
   }
 }
