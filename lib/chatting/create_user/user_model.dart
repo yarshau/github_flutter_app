@@ -1,3 +1,5 @@
+import 'package:firebase_auth/firebase_auth.dart';
+
 abstract class FirebaseResponse {}
 
 class FireBaseResponseError extends FirebaseResponse {
@@ -6,36 +8,57 @@ class FireBaseResponseError extends FirebaseResponse {
   FireBaseResponseError(this.message);
 }
 
-class User extends FirebaseResponse {
+class UserModel extends FirebaseResponse {
   final bool isNewUser;
-  final String username;
-  final String displayName;
-  final String email;
+  final String? displayName;
+  final String? email;
   final bool isAnonymous;
-  final int phoneNumber;
-  final String photoURL;
+  final String? phoneNumber;
+  final String? photoURL;
   final String uid;
+//  final UserMetadata metadata;
+  final bool emailVerified;
+//  final List<UserInfo> providerData;
 
-  User(
-      {required this.displayName,
-      required this.email,
-      required this.isAnonymous,
-      required this.phoneNumber,
-      required this.photoURL,
-      required this.uid,
-      required this.isNewUser,
-      required this.username});
+  UserModel({required this.displayName,
+    required this.email,
+    required this.isAnonymous,
+    required this.phoneNumber,
+    required this.photoURL,
+    required this.uid,
+    required this.isNewUser,
+    required this.emailVerified,
+//    required this.metadata,
+//    required this.providerData
+  });
 
-  factory User.fromJson(Map json) {
-    return User(
-      isNewUser: false,
-      phoneNumber: 12345,
-      username: 'dds',
-      displayName: '',
-      uid: '',
-      isAnonymous: false,
-      email: '',
-      photoURL: '',
+  factory UserModel.fromFirebaseUser(User user) {
+    return UserModel(
+        isNewUser: true,
+        phoneNumber: user.phoneNumber ?? null,
+        displayName: user.displayName,
+        uid: user.uid,
+        isAnonymous: user.isAnonymous,
+        email: user.email,
+        photoURL: user.photoURL,
+        emailVerified: user.emailVerified,
+//        metadata: user.metadata,
+//        providerData: user.providerData
     );
+  }
+
+  Map <String, dynamic> toFireStore(){
+    return {
+      'isNewUser': isNewUser,
+      'phoneNumber': phoneNumber,
+      'displayName': displayName,
+      'uid': uid,
+      'isAnonymous': isAnonymous,
+      'email': email,
+      'photoURL': photoURL,
+      'emailVerified': emailVerified,
+//      'metadata': metadata,
+//      'providerData': providerData
+    };
   }
 }

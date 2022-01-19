@@ -1,8 +1,9 @@
 import 'dart:async';
-import 'dart:convert';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_admin/firebase_admin.dart';
+import 'package:github_flutter_app/chatting/create_user/user_model.dart';
 
 class AuthService {
   final FirebaseAuth _auth = FirebaseAuth.instance;
@@ -25,16 +26,19 @@ class AuthService {
       await user!.updateDisplayName(
           email.replaceRange(email.indexOf('@'), email.length, ''));
 //      print(('additional info${user.additionalUserInfo}'));
-      FirebaseAuth.instance.currentUser;
-      final currentUser = await FirebaseAuth.instance.currentUser;;
-      print('currentUser $currentUser');
-//      final js = await json.decode(currentUser);
-      print('_auth.currentUser.toString() ${_auth.currentUser.toString()}');
-      print('_auth.currentUser.runtimeType ${_auth.currentUser.runtimeType}');
-      print('user.toString()  ${user.toString()}');
+//      final currentUser1 = await _auth.;;
+//      print('currentUser ${a}');
+//      final js = (json.decode() as List<dynamic>)
+
+      final UserModel userInfo = UserModel.fromFirebaseUser(user);
+
+
+//      print('_auth.currentUser.toString() ${_auth.currentUser.toString()}');
+//      print('_auth.currentUser.runtimeType ${_auth.currentUser}');
+//      print('user.toString()  ${user.toString()}');
 //      print('json $js');
       final list = FirebaseFirestore.instance.collection('users').doc();
-      list.set({'uid': '${user.toString()}'});
+      list.set(userInfo.toFireStore());
       return user.toString();
     } catch (e) {
       print('${e.toString()}');
@@ -43,11 +47,9 @@ class AuthService {
   }
 
   Future getUsers() async {
-    final users = await _auth.currentUser!.updatePhotoURL(
-        'https://images.unsplash.com/photo-1508921912186-1d1a45ebb3c1?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxzZWFyY2h8MXx8cGhvdG98ZW58MHx8MHx8&w=1000&q=80');
-//    final currentUser = await _auth.currentUser;
-//  print('current is: ${currentUser!.uid}');
-//  return currentUser!.uid;
+    final a = FirebaseAdmin.instance.initializeApp();
+    final b = await a.auth().listUsers();
+    print ('bbbb $b');
   }
 
   Future<DocumentSnapshot> getData() async {
