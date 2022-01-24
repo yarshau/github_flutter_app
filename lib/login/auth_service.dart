@@ -19,31 +19,26 @@ class AuthService {
     }
   }
 
-  Future<String> createNewUser(String email, String password) async {
+  Future<String> createNewUser(String email, String password, String phoneNumber) async {
     try {
       final User? user = (await _auth.createUserWithEmailAndPassword(
-          email: email, password: password,)).user;
+          email: email, password: password)).user;
       await user!.updateDisplayName(
           email.replaceRange(email.indexOf('@'), email.length, ''));
-//      print(('additional info${user.additionalUserInfo}'));
-//      final currentUser1 = await _auth.;;
-//      print('currentUser ${a}');
-//      final js = (json.decode() as List<dynamic>)
-
       final UserModel userInfo = UserModel.fromFirebaseUser(user);
-
-
-//      print('_auth.currentUser.toString() ${_auth.currentUser.toString()}');
-//      print('_auth.currentUser.runtimeType ${_auth.currentUser}');
-//      print('user.toString()  ${user.toString()}');
+      final Map<String, dynamic> sendUser = userInfo.toFireStore(phoneNumber: phoneNumber);
 //      print('json $js');
-      final list = FirebaseFirestore.instance.collection('users').doc();
-      list.set(userInfo.toFireStore());
-      return user.toString();
+      final userMap = await FirebaseFirestore.instance.collection('users').doc();
+      userMap.set(sendUser);
+      return sendUser.toString();
     } catch (e) {
       print('${e.toString()}');
       return e.toString();
     }
+  }
+
+  Future updatePhoneNumber() async {
+
   }
 
   Future getUsers() async {

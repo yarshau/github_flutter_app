@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:github_flutter_app/chatting/chatting_screen.dart';
 import 'package:github_flutter_app/login/auth_service.dart';
@@ -12,6 +13,8 @@ class _CreateUserPageState extends State<CreateUserPage> {
   final _email = TextEditingController(text: 'yar@test.com');
   final _password = TextEditingController(text: '123456');
   final _confirm_password = TextEditingController();
+  final _phoneNumber = TextEditingController();
+
   final _formKey = GlobalKey<FormState>();
   bool _isVisible = false;
 
@@ -31,46 +34,67 @@ class _CreateUserPageState extends State<CreateUserPage> {
                       fontSize: 30,
                       fontWeight: FontWeight.w900,
                       color: Colors.blue)),
-              TextFormField(
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Please enter some text';
-                  } else if (!value.contains('@') || !value.contains('.')) {
-                    return 'Please enter valid email';
-                  }
-                  ;
-                },
-                controller: _email,
-                decoration: InputDecoration(labelText: 'Email'),
-              ),
-              TextFormField(
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Please enter some text';
-                  } else if (value.length < 6) {
-                    return 'The length of password should be 6 or more symbols';
-                  }
-                },
-                controller: _password,
-                decoration: InputDecoration(labelText: 'Password'),
-              ),
-              TextFormField(
-                controller: _confirm_password,
-                decoration: InputDecoration(labelText: 'Confirm Password'),
+              Row(
+                children: [
+
+                  Flexible(fit: FlexFit.loose,
+                    child: Column(children: [
+                      SizedBox(height: 10),
+
+                      TextFormField(
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Please enter some text';
+                          } else if (!value.contains('@') || !value.contains('.')) {
+                            return 'Please enter valid email';
+                          }
+                          ;
+                        },
+                        controller: _email,
+                        decoration: InputDecoration(labelText: 'Email \ *', border: OutlineInputBorder(borderRadius: BorderRadius.all(Radius.circular(10.0)))),
+                      ),SizedBox(height: 10),
+                      TextFormField(
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Please enter some text';
+                          } else if (value.length < 6) {
+                            return 'The length of password should be 6 or more symbols';
+                          }
+                        },
+                        controller: _password,
+                        decoration: InputDecoration(labelText: 'Password \ *', border: OutlineInputBorder(borderRadius: BorderRadius.all(Radius.circular(10.0)))),
+                      ),SizedBox(height: 10),
+                      TextFormField(
+                        controller: _confirm_password,
+                        decoration: InputDecoration(labelText: 'Confirm Password', border: OutlineInputBorder(borderRadius: BorderRadius.all(Radius.circular(10.0)))),
+                      ),
+                    ]),
+                  ),
+                  Flexible(
+                    child: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Column(
+                        children: [
+                          TextFormField(
+                          controller: _phoneNumber,
+                            decoration: InputDecoration(labelText: 'Phone Number \ *', border: OutlineInputBorder(borderRadius: BorderRadius.all(Radius.circular(10.0)))),
+                          ),
+                        ],
+                      ),
+                    ),
+                  )],
               ),
               ElevatedButton(
                 child: Text('Create'),
                 onPressed: () async {
                   if (_formKey.currentState!.validate()) {
                     String result = await _authService.createNewUser(
-                        _email.text, _password.text);
+                        _email.text, _password.text, _phoneNumber.text);
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(content: Text('$result')),
                     );
                     _isVisible = true;
-                    setState(() {
-
-                    });
+                    setState(() {});
                   }
                 },
               ),

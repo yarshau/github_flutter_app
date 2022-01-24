@@ -13,10 +13,11 @@ class UserModel extends FirebaseResponse {
   final String? displayName;
   final String? email;
   final bool isAnonymous;
-  final String? phoneNumber;
+  String? phoneNumber;
   final String? photoURL;
   final String uid;
-//  final UserMetadata metadata;
+  final DateTime? creationTime;
+  final DateTime? lastSignInTime;
   final bool emailVerified;
 //  final List<UserInfo> providerData;
 
@@ -28,26 +29,27 @@ class UserModel extends FirebaseResponse {
     required this.uid,
     required this.isNewUser,
     required this.emailVerified,
-//    required this.metadata,
+    required this.creationTime,
+    required this.lastSignInTime
 //    required this.providerData
   });
 
   factory UserModel.fromFirebaseUser(User user) {
     return UserModel(
         isNewUser: true,
-        phoneNumber: user.phoneNumber ?? null,
+        phoneNumber: user.phoneNumber,
         displayName: user.displayName,
         uid: user.uid,
         isAnonymous: user.isAnonymous,
         email: user.email,
         photoURL: user.photoURL,
         emailVerified: user.emailVerified,
-//        metadata: user.metadata,
-//        providerData: user.providerData
+        creationTime: user.metadata.creationTime,
+        lastSignInTime: user.metadata.lastSignInTime
     );
   }
 
-  Map <String, dynamic> toFireStore(){
+  Map <String, dynamic> toFireStore({phoneNumber}){
     return {
       'isNewUser': isNewUser,
       'phoneNumber': phoneNumber,
@@ -57,8 +59,14 @@ class UserModel extends FirebaseResponse {
       'email': email,
       'photoURL': photoURL,
       'emailVerified': emailVerified,
-//      'metadata': metadata,
-//      'providerData': providerData
+      'creationTime': creationTime,
+      'lastSignInTime': lastSignInTime
     };
+  }
+
+  @override
+  String toString() {
+    super.toString();
+    return toFireStore().toString();
   }
 }
