@@ -1,5 +1,6 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:github_flutter_app/login/auth_service.dart';
 import 'package:github_flutter_app/login/login_page.dart';
 import 'package:provider/provider.dart';
 import 'api/github_client.dart';
@@ -22,6 +23,7 @@ class Git extends StatelessWidget {
         Provider<GitHubClient>(create: (_) => GitHubClient()),
         Provider<GitHubRepository>(create: (_) => GitHubRepository()),
         ChangeNotifierProvider<MyProvider>.value(value: MyProvider()),
+        Provider<AuthService>(create: (_) => AuthService())
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,

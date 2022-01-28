@@ -1,16 +1,14 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_core/firebase_core.dart';
-import 'package:firebase_storage/firebase_storage.dart';
-import 'package:github_flutter_app/login/auth_service.dart';
+import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
 
 
 class FirebaseClient{
-AuthService _authService = AuthService();
-  Future <void> getUsersInfo() async {
-//    FirebaseFirestore.instance.collectionGroup()
-    final list = await FirebaseFirestore.instance.collection('users');
-    final currentUsers = await _authService.getUsers();
-    print('list  33333 $list');
+  firebase_storage.FirebaseStorage storage = firebase_storage.FirebaseStorage.instance;
+
+  Future  getUserAvatar(String userId) async {
+    final avatar = await storage.ref('avatars/$userId').getDownloadURL();
+        print('list  33333 $avatar');
+
+    return avatar;
   }
 
 //  Future uploadUserIdToFirestoreDatabase() async{

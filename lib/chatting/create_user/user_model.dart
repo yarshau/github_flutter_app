@@ -60,7 +60,8 @@ class UserModel extends FirebaseResponse {
       'photoURL': photoURL,
       'emailVerified': emailVerified,
       'creationTime': creationTime,
-      'lastSignInTime': lastSignInTime
+      'lastSignInTime': lastSignInTime,
+
     };
   }
 

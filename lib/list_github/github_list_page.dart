@@ -4,11 +4,9 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import '../api/github_client.dart';
 import '../api/github_model.dart';
-import '../chatting/chatting_screen.dart';
 import 'package:provider/provider.dart';
 import 'dart:convert';
 import 'package:url_launcher/url_launcher.dart';
-
 import '../db/github_repository.dart';
 import '../details_github/details_page_widget.dart';
 import 'bloc/github_bloc.dart';
@@ -156,12 +154,12 @@ class GitHubPageState extends State<GitHubPage> {
                 title: Text('Chatting'),
                 leading: Icon(FontAwesomeIcons.snapchat),
               ),
-              onTap: () {
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (BuildContext context) => ChattingScreen()));
-              },
+//              onTap: () {
+//                Navigator.push(
+//                    context,
+//                    MaterialPageRoute(
+//                        builder: (BuildContext context) => ChattingScreen()));
+//              },
             ),
             Spacer(),
             Row(
