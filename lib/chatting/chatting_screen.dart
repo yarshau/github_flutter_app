@@ -1,7 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:github_flutter_app/login/auth_service.dart';
-import 'package:github_flutter_app/login/login_page.dart';
 
 class ChattingScreen extends StatefulWidget {
   @override
@@ -45,8 +44,8 @@ class _ChattingScreenState extends State<ChattingScreen> {
             ElevatedButton(
                 onPressed: () async {
                   await _authService.logOut();
-                  Navigator.pushReplacement(context,
-                      MaterialPageRoute(builder: (context) => LoginPage()));
+                  Navigator.pushReplacementNamed(context, 'login_screen'
+                      );
                 },
                 child: Text('log out')),
             Text('Here we go chatting...'),

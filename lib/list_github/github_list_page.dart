@@ -1,12 +1,10 @@
 import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import '../api/github_client.dart';
 import '../api/github_model.dart';
 import 'package:provider/provider.dart';
 import 'dart:convert';
-import 'package:url_launcher/url_launcher.dart';
 import '../db/github_repository.dart';
 import '../details_github/details_page_widget.dart';
 import 'bloc/github_bloc.dart';
@@ -141,156 +139,105 @@ class GitHubPageState extends State<GitHubPage> {
       );
     }
 
-    Widget Contacts() {
-      return Drawer(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.end,
-          children: [
-            SizedBox(
-              height: 50,
-            ),
-            InkWell(
-              child: ListTile(
-                title: Text('Chatting'),
-                leading: Icon(FontAwesomeIcons.snapchat),
-              ),
-//              onTap: () {
-//                Navigator.push(
-//                    context,
-//                    MaterialPageRoute(
-//                        builder: (BuildContext context) => ChattingScreen()));
-//              },
-            ),
-            Spacer(),
-            Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                IconButton(
-                  icon: Icon(Icons.call),
-                  onPressed: () async {
-                    await launch('tel:<380968361508>');
-                  },
-                ),
-                IconButton(
-                  onPressed: () async {
-                    await launch('https://www.instagram.com/yar.shau/',
-                        forceSafariVC: true);
-                  },
-                  icon: Icon(FontAwesomeIcons.instagram),
-                ),
-                IconButton(
-                    onPressed: () async {
-                      await launch('https://github.com/yarshau/',
-                          forceSafariVC: true);
-                    },
-                    icon: Icon(FontAwesomeIcons.github)),
-                IconButton(
-                    onPressed: () async {
-                      await launch('mailto:yarshau@gmail.com');
-                    },
-                    icon: Icon(Icons.mail_outline)),
-              ],
-            ),
-            Text('Contacts'),
-          ],
-        ),
-      );
-    }
 
-    return Scaffold(
-      backgroundColor: Colors.white12,
-      resizeToAvoidBottomInset: true,
-      appBar: AppBar(title: Text('${_myProvider.str}')),
-      drawer: Contacts(),
-      body: BlocProvider<GitHubBloc>(
+
+//    return Scaffold(
+//      backgroundColor: Colors.white12,
+//      resizeToAvoidBottomInset: true,
+//      appBar: AppBar(title: Text('${_myProvider.str}')),
+//      drawer: Contacts(),
+//      body:
+    return Material(
+      child: BlocProvider<GitHubBloc>(
         create: (BuildContext context) => _bloc,
         lazy: true,
-        child: Column(
-          children: <Widget>[
-            SizedBox(
-              height: 10,
-            ),
-            Row(
-              children: [
-                SizedBox(
-                  width: 20,
-                ),
-                Flexible(
-                    fit: FlexFit.tight,
-                    child: TextField(
-                      autofocus: false,
-                      onChanged: (newData) {
-                        _myProvider.changedField(newData);
-                      },
-                      decoration: InputDecoration(
-                          labelText: 'Input Repos name',
-                          prefixIcon: Icon(Icons.search_rounded),
-                          border: OutlineInputBorder()),
-                      controller: _controller,
-                    )),
-                SizedBox(
-                  width: 20,
-                )
-              ],
-            ),
-            Expanded(
-              child: BlocBuilder<GitHubBloc, GitHubState>(
-                  bloc: _bloc,
-                  builder: (BuildContext context, state) {
-                    print('state $state');
-                    if (state is GitHubEmptyState) {
-                      return Column(children: [
-                        showPage([]),
-                        Text('Press on the Search button'),
-                      ]);
-                    } else if (state is GitHubInitial) {
-                      return Column(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        children: [
-                          SizedBox(height: 35,),
-                          CircularProgressIndicator(),
-                          Text('Loading in progress...')
-                        ],
-                      );
-                    } else if (state is GitHubLoaded) {
-                      List<RepoInfo> list = state.loadedItems;
-                      return Column(
-                        children: [
-                          Container(
-                              height: 50, child: showPage(state.listToDelete)),
-                          Expanded(
-                            child: _buildRepoList(list, state.listToDelete),
-                          )
-                        ],
-                      );
-                    } else if (state is GitHubError) {
-                      return Container(
-                        child: Column(
+          child: Column(
+            children: <Widget>[
+              SizedBox(
+                height: 10,
+              ),
+              Row(
+                children: [
+                  SizedBox(
+                    width: 20,
+                  ),
+                  Flexible(
+                      fit: FlexFit.tight,
+                      child: TextField(
+                        autofocus: false,
+                        onChanged: (newData) {
+                          _myProvider.changedField(newData);
+                        },
+                        decoration: InputDecoration(
+                            labelText: 'Input Repos name',
+                            prefixIcon: Icon(Icons.search_rounded),
+                            border: OutlineInputBorder()),
+                        controller: _controller,
+                      )),
+                  SizedBox(
+                    width: 20,
+                  )
+                ],
+              ),
+              Expanded(
+                child: BlocBuilder<GitHubBloc, GitHubState>(
+                    bloc: _bloc,
+                    builder: (BuildContext context, state) {
+                      print('state $state');
+                      if (state is GitHubEmptyState) {
+                        return Column(children: [
+                          showPage([]),
+                          Text('Press on the Search button'),
+                        ]);
+                      } else if (state is GitHubInitial) {
+                        return Column(
+                          mainAxisAlignment: MainAxisAlignment.start,
                           children: [
-                            showPage([]),
-                            Text('The status code is: ${state.statusCode}'),
-                            Text('The reason is: ${state.reason}'),
+                            SizedBox(height: 35,),
+                            CircularProgressIndicator(),
+                            Text('Loading in progress...')
                           ],
-                        ),
-                      );
-                    } else {
-                      return SingleChildScrollView(
-                        child: Column(
+                        );
+                      } else if (state is GitHubLoaded) {
+                        List<RepoInfo> list = state.loadedItems;
+                        return Column(
                           children: [
-                            showPage([]),
-                            Text(
-                                'No data was found on GitHub with this Search input'),
-                            Image.asset('assets/no_data_found.png'),
+                            Container(
+                                height: 50, child: showPage(state.listToDelete)),
+                            Expanded(
+                              child: _buildRepoList(list, state.listToDelete),
+                            )
                           ],
-                        ),
-                      );
-                    }
-                  }),
-            )
-          ],
+                        );
+                      } else if (state is GitHubError) {
+                        return Container(
+                          child: Column(
+                            children: [
+                              showPage([]),
+                              Text('The status code is: ${state.statusCode}'),
+                              Text('The reason is: ${state.reason}'),
+                            ],
+                          ),
+                        );
+                      } else {
+                        return SingleChildScrollView(
+                          child: Column(
+                            children: [
+                              showPage([]),
+                              Text(
+                                  'No data was found on GitHub with this Search input'),
+                              Image.asset('assets/no_data_found.png'),
+                            ],
+                          ),
+                        );
+                      }
+                    }),
+              )
+            ],
+          ),
         ),
-      ),
     );
+//    );
   }
 
   @override

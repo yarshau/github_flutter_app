@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:github_flutter_app/chatting/create_user/create_user_page.dart';
 import 'package:github_flutter_app/login/auth_service.dart';
 
-import '../chatting/chatting_screen.dart';
 
 class LoginPage extends StatefulWidget {
   @override
@@ -44,10 +42,7 @@ class _LoginPageState extends State<LoginPage> {
                       OutlinedButton(
                           child: Text('Sign Up'),
                           onPressed: () {
-                            Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => CreateUserPage()));
+                            Navigator.pushReplacementNamed(context, 'sign_up_screen');
                           }),
                       SizedBox(width: 20),
                       ElevatedButton(
@@ -63,8 +58,7 @@ class _LoginPageState extends State<LoginPage> {
                             } else {
                               print('login    $login');
                               FocusManager.instance.primaryFocus?.unfocus();
-                              Navigator.pushReplacement(context, MaterialPageRoute(
-                                  builder: (context) => ChattingScreen()));
+                              Navigator.pushReplacementNamed(context, 'chatting_screen');
                             }  }),
                     ]),
                   SizedBox(height: 15,),
