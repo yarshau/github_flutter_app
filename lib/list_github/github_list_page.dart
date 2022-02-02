@@ -138,14 +138,6 @@ class GitHubPageState extends State<GitHubPage> {
       );
     }
 
-
-
-//    return Scaffold(
-//      backgroundColor: Colors.white12,
-//      resizeToAvoidBottomInset: true,
-//      appBar: AppBar(title: Text('${_myProvider.str}')),
-//      drawer: Contacts(),
-//      body:
     return Material(
       child: BlocProvider<GitHubBloc>(
         create: (BuildContext context) => _bloc,

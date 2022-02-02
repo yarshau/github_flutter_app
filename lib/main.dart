@@ -19,8 +19,6 @@ Future<void> main() async {
 }
 
 class Git extends StatelessWidget {
-
-
   @override
   Widget build(BuildContext context) {
     return MultiProvider(
@@ -30,40 +28,21 @@ class Git extends StatelessWidget {
           Provider<AuthService>(create: (_) => AuthService()),
         ],
         child: MaterialApp(
-          debugShowCheckedModeBanner: false,
-          routes: {
-            'login_screen': (context) => LoginPage(),
-            'chatting_screen': (context) => ChattingScreen(),
-            'sign_up_screen': (context) => CreateUserPage(),
-            'git_hub_screen': (context) => GitHubPage()
-          },
-         home: MyApp()
-        ));
+            debugShowCheckedModeBanner: false,
+            routes: {
+              'login_screen': (context) => LoginPage(),
+              'chatting_screen': (context) => ChattingScreen(),
+              'sign_up_screen': (context) => CreateUserPage(),
+              'git_hub_screen': (context) => GitHubPage(),
+              'my_app' : (context) => MyApp()
+            },
+            home: MyApp()));
   }
 }
 
-class MyApp extends StatefulWidget {
-  @override
-  State<MyApp> createState() => _MyAppState();
-}
-
-class _MyAppState extends State<MyApp> {
-  int index = 0;
-  List<Widget> list = [LoginPage(), GitHubPage()];
-
+class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: Text('Messenger')),
-      drawer: MyDrawer(
-        onTap: (ctx, int i) {
-          setState(() {
-            index = i;
-            Navigator.pop(ctx);
-          });
-        },
-      ),
-      body: list[index],
-    );
+    return MyScaffold();
   }
 }

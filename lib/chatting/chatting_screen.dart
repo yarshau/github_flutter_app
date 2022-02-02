@@ -52,7 +52,7 @@ class _ChattingScreenState extends State<ChattingScreen> {
             IconButton(
                 onPressed: () async {
                   await _authService.logOut();
-                  Navigator.pushReplacementNamed(context, 'login_screen');
+                  Navigator.pushReplacementNamed(context, 'my_app');
                 },
                 icon: Icon(Icons.exit_to_app)),
           ]),

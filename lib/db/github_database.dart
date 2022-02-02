@@ -31,6 +31,7 @@ class DatabaseProvider {
     name TEXT,
     gitUrl TEXT,
     avatarUrl BLOB,
+    login TEXT,
     fullName TEXT,
     organizationsUrl TEXT,
     licenseName TEXT,
