@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 abstract class FirebaseResponse {}
@@ -13,24 +14,26 @@ class UserModel extends FirebaseResponse {
   final String? displayName;
   final String? email;
   final bool isAnonymous;
-  String? phoneNumber;
+  final String? phoneNumber;
   final String? photoURL;
   final String uid;
   final DateTime? creationTime;
   final DateTime? lastSignInTime;
   final bool emailVerified;
+
 //  final List<UserInfo> providerData;
 
-  UserModel({required this.displayName,
+  UserModel({
+    this.isAnonymous = false,
+    this.isNewUser = true,
+    this.emailVerified = true,
+    this.creationTime,
+    this.lastSignInTime,
+    required this.displayName,
     required this.email,
-    required this.isAnonymous,
     required this.phoneNumber,
     required this.photoURL,
     required this.uid,
-    required this.isNewUser,
-    required this.emailVerified,
-    required this.creationTime,
-    required this.lastSignInTime
 //    required this.providerData
   });
 
@@ -49,7 +52,21 @@ class UserModel extends FirebaseResponse {
     );
   }
 
-  Map <String, dynamic> toFireStore({phoneNumber}){
+  factory UserModel.fromJson(user) {
+    return UserModel(
+        isNewUser: true,
+        phoneNumber: user['phoneNumber'],
+        displayName: user['displayName'],
+        uid: user['uid'],
+        isAnonymous: user['isAnonymous'],
+        email: user['email'],
+        photoURL: user['photoURL'],
+        emailVerified: user['emailVerified'],
+        creationTime: Timestamp.now().toDate(),
+        lastSignInTime: Timestamp.now().toDate());
+  }
+
+  Map<String, dynamic> toFireStore(String uid, String displayName, String? email, phoneNumber, photoURL) {
     return {
       'isNewUser': isNewUser,
       'phoneNumber': phoneNumber,
@@ -61,13 +78,12 @@ class UserModel extends FirebaseResponse {
       'emailVerified': emailVerified,
       'creationTime': creationTime,
       'lastSignInTime': lastSignInTime,
-
     };
   }
 
-  @override
-  String toString() {
-    super.toString();
-    return toFireStore().toString();
-  }
+//  @override
+//  String toString() {
+//    super.toString();
+//    return toFireStore().toString();
+//  }
 }

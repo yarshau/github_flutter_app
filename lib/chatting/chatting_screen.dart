@@ -1,6 +1,9 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:github_flutter_app/login/auth_service.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:github_flutter_app/chatting/chatting_bloc.dart';
+import 'package:github_flutter_app/chatting/create_user/user_model.dart';
+
+import 'login/auth_service.dart';
 
 class ChattingScreen extends StatefulWidget {
   @override
@@ -12,42 +15,55 @@ class _ChattingScreenState extends State<ChattingScreen> {
   AuthService _authService = AuthService();
 
   late String userId;
+  late Future<List<UserModel>> users;
+  late ChattingBloc _bloc;
+  List myListMessages = [];
 
   @override
   void initState() {
     super.initState();
-    User? user = _authService.getUser();
-    userId = user!.uid;
+    AuthService _authService = AuthService();
+    _bloc = ChattingBloc(_authService);
+    userId = _authService.getCurrentUserId;
+    users = _authService.getAllUsers();
   }
 
   @override
   Widget build(BuildContext context) {
-    return Material(
-      child: Scaffold(
-        appBar: AppBar(
-            leading: FutureBuilder(
-                future: _getAvatar(context, userId),
-                builder: (context, AsyncSnapshot snapshot) {
-                  if (snapshot.hasError) {
-                    print(snapshot.error);
-                  }
-                  if (snapshot.connectionState == ConnectionState.done) {
-                    print('snaphot : ${snapshot.data.toString()}');
-                    return CircleAvatar(child: snapshot.data);
-                  } else {
-                    return Text('no avatar');
-                  }
-                })),
-        body: Column(
-          mainAxisAlignment: MainAxisAlignment.end,
-          children: [
-            ElevatedButton(
+    return Scaffold(
+      appBar: AppBar(
+          leading: FutureBuilder(
+              future: _getAvatar(context, userId),
+              builder: (context, AsyncSnapshot snapshot) {
+                if (snapshot.hasError) {
+                  print(snapshot.error);
+                }
+                if (snapshot.connectionState == ConnectionState.done) {
+                  print('snaphot : ${snapshot.data.toString()}');
+                  return CircleAvatar(
+                      backgroundColor: Colors.black12,
+                      foregroundColor: Colors.yellowAccent,
+                      backgroundImage: NetworkImage(snapshot.data));
+                } else {
+                  return CircularProgressIndicator();
+                }
+              }),
+          actions: [
+            IconButton(
                 onPressed: () async {
                   await _authService.logOut();
-                  Navigator.pushReplacementNamed(context, 'login_screen'
-                      );
+                  Navigator.pushReplacementNamed(context, 'login_screen');
                 },
-                child: Text('log out')),
+                icon: Icon(Icons.exit_to_app)),
+          ]),
+      body: BlocProvider(
+        create: (context) => _bloc,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.end,
+          children: [
+            usersRaw(),
+            Spacer(),
+            ChattingWidget(),
             Text('Here we go chatting...'),
             Row(
               children: [
@@ -67,10 +83,11 @@ class _ChattingScreenState extends State<ChattingScreen> {
                   ),
                 ),
                 ElevatedButton(
-                    onPressed: () async {
-//                      await _firebaseClient.getUserAvatar();
+                    onPressed: () {
+                      _bloc
+                          .add(SendMessageEvent(text: _messageController.text));
                     },
-                    child: Text('users'))
+                    child: Text('Send'))
               ],
             ),
           ],
@@ -79,11 +96,73 @@ class _ChattingScreenState extends State<ChattingScreen> {
     );
   }
 
-  Future<Image?> _getAvatar(BuildContext context, String userId) async {
-    Image? image;
+  Future<String> _getAvatar(BuildContext context, String userId) async {
     String imageUrl = await _authService.getUserAvatar(userId);
-    print('imageURLL $imageUrl');
-    image = Image.network(imageUrl);
-    return image;
+    return imageUrl;
+  }
+
+  Widget usersRaw() {
+    return FutureBuilder<List<UserModel>>(
+        future: _authService.getAllUsers(),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.done) {
+            print('snapshot list of USERS: ${snapshot.data}');
+            return Container(
+              height: 70,
+              child: ListView.builder(
+                scrollDirection: Axis.horizontal,
+                itemCount: snapshot.data!.length,
+                itemBuilder: (context, index) {
+                  final user = snapshot.data![index];
+                  return Container(
+                    margin: const EdgeInsets.only(right: 12),
+                    child: GestureDetector(
+                      onTap: () {
+                        _bloc.add(OpenChatWithUserEvent(user.uid));
+                      },
+                      child: Column(
+                        children: [
+                          Flexible(
+                            flex: 10,
+                            child: CircleAvatar(
+                              radius: 24,
+                              backgroundImage: NetworkImage(user.photoURL!),
+                            ),
+                          ),
+                          Flexible(flex: 3, child: Text('${user.displayName}'))
+                        ],
+                      ),
+                    ),
+                  );
+                },
+              ),
+            );
+          } else
+            return Text('No data');
+        });
+  }
+
+  Widget ChattingWidget() {
+    return BlocBuilder<ChattingBloc, ChattingState>(
+        bloc: _bloc,
+        builder: (BuildContext context, state) {
+          print('state ${state}');
+          if (state is OpenSelectedUser) {
+            return Text(state.userId);
+          }
+          if (state is SendMessageState) {
+            myListMessages.add(state.text);
+            return messageWidget();
+          } else
+            return Text('sa');
+        });
+  }
+
+  Widget messageWidget() {
+    return ListView.builder(
+      itemBuilder: (_, index) => Container(child: Text(myListMessages[index])),
+      itemCount: myListMessages.length,
+
+    );
   }
 }

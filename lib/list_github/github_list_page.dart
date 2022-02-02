@@ -21,7 +21,6 @@ class GitHubPage extends StatefulWidget {
 class GitHubPageState extends State<GitHubPage> {
   final _controller = TextEditingController();
   late final GitHubBloc _bloc;
-  late MyProvider _myProvider = Provider.of<MyProvider>(context);
 
   @override
   void initState() {
@@ -165,9 +164,6 @@ class GitHubPageState extends State<GitHubPage> {
                       fit: FlexFit.tight,
                       child: TextField(
                         autofocus: false,
-                        onChanged: (newData) {
-                          _myProvider.changedField(newData);
-                        },
                         decoration: InputDecoration(
                             labelText: 'Input Repos name',
                             prefixIcon: Icon(Icons.search_rounded),
@@ -237,23 +233,6 @@ class GitHubPageState extends State<GitHubPage> {
           ),
         ),
     );
-//    );
-  }
-
-  @override
-  void dispose() {
-    _myProvider.dispose();
-    super.dispose();
   }
 }
 
-class MyProvider extends ChangeNotifier {
-  String _appBarString = 'Changed Text';
-
-  String get str => _appBarString;
-
-  void changedField(String inputString) {
-    _appBarString = inputString;
-    notifyListeners();
-  }
-}

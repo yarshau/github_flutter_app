@@ -1,14 +1,12 @@
-import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
+import 'package:firebase_database/firebase_database.dart';
 
 
 class FirebaseClient{
-  firebase_storage.FirebaseStorage storage = firebase_storage.FirebaseStorage.instance;
 
-  Future  getUserAvatar(String userId) async {
-    final avatar = await storage.ref('avatars/$userId').getDownloadURL();
-        print('list  33333 $avatar');
+  FirebaseDatabase database = FirebaseDatabase.instance;
 
-    return avatar;
+//  Stream sendMessage(message){
+//    database.ref();
   }
 
 //  Future uploadUserIdToFirestoreDatabase() async{
@@ -20,4 +18,4 @@ class FirebaseClient{
 //    list.set({'uid': '${k.toString()}'});
 //  }
 
-}
+//}

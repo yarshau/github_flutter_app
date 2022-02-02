@@ -38,7 +38,6 @@ class GitHubBloc extends Bloc<GitHubEvents, GitHubState> {
       }
     });
 
-// if no internet connection - the images won't displayed
     on<InitEvent>((event, emit) async {
       emit(GitHubEmptyState());
     });

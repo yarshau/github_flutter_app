@@ -4,8 +4,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:github_flutter_app/chatting/chatting_screen.dart';
-import 'package:github_flutter_app/login/auth_service.dart';
 import 'package:image_picker/image_picker.dart';
+import '../login/auth_service.dart';
+
 
 class CreateUserPage extends StatefulWidget {
   @override

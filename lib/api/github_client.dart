@@ -19,6 +19,7 @@ class GitHubClient {
           Map<String, dynamic> ownerMap = _items[i]['owner'];
           final image = await http.get(Uri.parse(ownerMap['avatar_url']));
           ownerMap['avatar_url'] = image.bodyBytes.toString();
+          print('result   ${_result}');
           _result.add(RepoInfo.fromJson(_items[i]));
         }
         return ResponseSuccess(_result);
