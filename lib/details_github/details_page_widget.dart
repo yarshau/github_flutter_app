@@ -25,7 +25,7 @@ class _DetailsPageState extends State<DetailsPage> {
   final String name;
   late DetailsCubit _detailsCubit = DetailsCubit(Provider.of<GitHubRepository>(context), id, name);
 
-  
+
 
   @override
   Widget build(BuildContext context) {

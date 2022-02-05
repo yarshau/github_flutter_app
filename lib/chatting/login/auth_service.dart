@@ -12,7 +12,8 @@ class AuthService {
   firebase_storage.FirebaseStorage _storage =
       firebase_storage.FirebaseStorage.instance;
   FirebaseFirestore _firestore = FirebaseFirestore.instance;
-  FirebaseDatabase realtimeDatabase = FirebaseDatabase.instance;
+  DatabaseReference realtimeDatabase =
+      FirebaseDatabase.instance.ref().child('/wd');
 
   Future<Object?> signInWithEmailAndPassword(
       String email, String password) async {
@@ -32,9 +33,7 @@ class AuthService {
   Future<List<UserModel>> getAllUsers() async {
     CollectionReference<Map<String, dynamic>> users =
         _firestore.collection('users');
-//    UserModel.fromFirebaseUser(users);
     QuerySnapshot querySnapshot = await users.get();
-    // if write these 2 strings in 1 - getting 2 nulls   -- why???
     final allData = querySnapshot.docs;
     List<UserModel> listUsers =
         allData.map((e) => UserModel.fromJson(e.data())).toList();
@@ -110,10 +109,16 @@ class AuthService {
     await _auth.signOut();
   }
 
-
-//Stream stream(){
-//    return realtimeDatabase.
-//}
-
-
+  Future<void> sendMessage({required String message}) async {
+//    final _userDirectoryInRealtimeDb =
+//        realtimeDatabase.ref().child('/userDirectory');
+    try {
+      await realtimeDatabase.set({'message1': 'message[0]'});
+    } catch (error) {
+      print('You catched error $error');
+    }
+    ;
+    print('MESSAGE SENDED $message');
+//    return realtimeDatabase.ref('users/')
+  }
 }

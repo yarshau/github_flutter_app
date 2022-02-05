@@ -17,7 +17,6 @@ class _ChattingScreenState extends State<ChattingScreen> {
   late String userId;
   late Future<List<UserModel>> users;
   late ChattingBloc _bloc;
-  List myListMessages = [];
 
   @override
   void initState() {
@@ -29,11 +28,17 @@ class _ChattingScreenState extends State<ChattingScreen> {
   }
 
   @override
+  void dispose() {
+    _bloc.close();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
           leading: FutureBuilder(
-              future: _getAvatar(context, userId),
+              future:  _getAvatar(context, userId),
               builder: (context, AsyncSnapshot snapshot) {
                 if (snapshot.hasError) {
                   print(snapshot.error);
@@ -73,9 +78,7 @@ class _ChattingScreenState extends State<ChattingScreen> {
                     decoration: InputDecoration(
                         prefixIcon: IconButton(
                             icon: Icon(Icons.emoji_emotions_outlined),
-                            onPressed: () async {
-//                              await _firebaseClient.upload();
-                            }),
+                            onPressed: () {}),
                         labelText: 'Message',
                         border: OutlineInputBorder(
                             borderRadius:
@@ -102,6 +105,44 @@ class _ChattingScreenState extends State<ChattingScreen> {
   }
 
   Widget usersRaw() {
+//    return BlocBuilder<ChattingBloc, ChattingState>(
+//        bloc: _bloc,
+//        builder: (BuildContext context, state) {
+//          if (state is EmptyState) {
+//            child:
+//            ListView.builder(
+//                scrollDirection: Axis.horizontal,
+//                itemCount: _bloc.users.length,
+//                itemBuilder: (context, index) {
+//                  final user = _bloc.users[index];
+//                  return Container(
+//                      margin: const EdgeInsets.only(right: 12),
+//                      child: GestureDetector(
+//                          onTap: () {
+//                            _bloc.add(OpenChatWithUserEvent(user.uid));
+//                          },
+//                          child: Column(
+//                            children: [
+//                              Flexible(
+//                                flex: 10,
+//                                child: CircleAvatar(
+//                                  radius: 24,
+//                                  backgroundImage: NetworkImage(user.photoURL!),
+//                                ),
+//                              ),
+//                              Flexible(
+//                                  flex: 3, child: Text('${user.displayName}'))
+//                            ],
+//                          )));
+//                });
+//          }
+//          print('state ${state}');
+//          if (state is OpenSelectedUser) {
+//            return Text(state.userId);
+//          }
+//          return Text('Not Loaded EmptyState');
+//        });
+
     return FutureBuilder<List<UserModel>>(
         future: _authService.getAllUsers(),
         builder: (context, snapshot) {
@@ -147,22 +188,33 @@ class _ChattingScreenState extends State<ChattingScreen> {
         bloc: _bloc,
         builder: (BuildContext context, state) {
           print('state ${state}');
-          if (state is OpenSelectedUser) {
-            return Text(state.userId);
-          }
           if (state is SendMessageState) {
-            myListMessages.add(state.text);
-            return messageWidget();
+            print('stateTEXTTT ${state.myListMessages}');
+            if (state.myListMessages.isEmpty) {
+              return Text(
+                'Send a Greeting to yor penpall',
+                style: TextStyle(fontSize: 15),
+              );
+            }
+            return messageWidget(state.myListMessages);
           } else
-            return Text('sa');
+            return Text('unknownState');
         });
   }
 
-  Widget messageWidget() {
-    return ListView.builder(
-      itemBuilder: (_, index) => Container(child: Text(myListMessages[index])),
-      itemCount: myListMessages.length,
-
+  Widget messageWidget(List myListMessages) {
+    return Container(
+      height: MediaQuery.of(context).size.height * 0.6,
+      child: ListView.builder(
+        itemBuilder: (_, index) => Chip(
+            label: Container(
+                padding: EdgeInsets.all(10),
+                child: Text(
+                  'My Message:  ${myListMessages[index]}',
+                  style: TextStyle(fontSize: 15),
+                ))),
+        itemCount: myListMessages.length,
+      ),
     );
   }
 }

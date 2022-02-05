@@ -24,55 +24,64 @@ class _LoginPageState extends State<LoginPage> {
             }
             if (snapshot.connectionState == ConnectionState.done) {
               return Container(
-                padding:
-                    EdgeInsets.all(MediaQuery.of(context).size.width * 0.1),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: <Widget>[
-                    TextFormField(
-                        controller: nickname,
-                        decoration: InputDecoration(
-                            labelText: 'Email', border: OutlineInputBorder())),
-                    SizedBox(height: 10),
-                    TextFormField(
-                        controller: password,
-                        decoration: InputDecoration(
-                            labelText: 'Password',
-                            border: OutlineInputBorder())),
-                    Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-                      OutlinedButton(
-                          child: Text('Sign Up'),
-                          onPressed: () {
-                            Navigator.pushReplacementNamed(
-                                context, 'sign_up_screen');
-                          }),
-                      SizedBox(width: 20),
-                      ElevatedButton(
-                              child: Text('Login'),
-                              onPressed: () async {
-                                Object? login = await _authService
-                                    .signInWithEmailAndPassword(
-                                        nickname.text, password.text);
-                                if (login == null) {
-                                  print('Incorrect Email or Password');
-                                  setState(() {
-                                    error = 'Incorrect Email or Password';
-                                  });
-                                } else {
-                                  print('chatting.login    $login');
-                                  FocusManager.instance.primaryFocus?.unfocus();
-                                  Navigator.pushNamed(context ,'chatting_screen');
-                                }
-                              }),
-                    ]),
-                    SizedBox(
-                      height: 15,
-                    ),
-                    Text(
-                      error,
-                      style: TextStyle(color: Colors.red, fontSize: 20),
-                    )
-                  ],
+                padding: EdgeInsets.only(
+                    left: MediaQuery.of(context).size.width * 0.1,
+                    right: MediaQuery.of(context).size.width * 0.1,
+                    top: MediaQuery.of(context).size.width * 0.1),
+                child: SingleChildScrollView(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: <Widget>[
+                      TextFormField(
+                          controller: nickname,
+                          decoration: InputDecoration(
+                              labelText: 'Email',
+                              border: OutlineInputBorder())),
+                      SizedBox(height: 10),
+                      TextFormField(
+                          controller: password,
+                          decoration: InputDecoration(
+                              labelText: 'Password',
+                              border: OutlineInputBorder())),
+                      Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            OutlinedButton(
+                                child: Text('Sign Up'),
+                                onPressed: () {
+                                  Navigator.pushReplacementNamed(
+                                      context, 'sign_up_screen');
+                                }),
+                            SizedBox(width: 20),
+                            ElevatedButton(
+                                child: Text('Login'),
+                                onPressed: () async {
+                                  Object? login = await _authService
+                                      .signInWithEmailAndPassword(
+                                          nickname.text, password.text);
+                                  if (login == null) {
+                                    print('Incorrect Email or Password');
+                                    setState(() {
+                                      error = 'Incorrect Email or Password';
+                                    });
+                                  } else {
+                                    print('chatting.login    $login');
+                                    FocusManager.instance.primaryFocus
+                                        ?.unfocus();
+                                    Navigator.pushNamed(
+                                        context, 'chatting_screen');
+                                  }
+                                }),
+                          ]),
+                      SizedBox(
+                        height: 15,
+                      ),
+                      Text(
+                        error,
+                        style: TextStyle(color: Colors.red, fontSize: 20),
+                      )
+                    ],
+                  ),
                 ),
               );
             } else {

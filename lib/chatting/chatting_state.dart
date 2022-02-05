@@ -30,10 +30,10 @@ class OpenSelectedUser extends ChattingState {
 }
 
 class SendMessageState extends ChattingState {
-  final String text;
+  final List<String> myListMessages;
 
-  SendMessageState({required this.text});
+  SendMessageState({required this.myListMessages});
 
   @override
-  List<Object> get props => [];
+  List<Object> get props => [myListMessages];
 }
